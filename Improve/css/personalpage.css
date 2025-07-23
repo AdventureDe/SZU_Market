@@ -1,0 +1,731 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+/* 页面基本样式 */
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 头部样式 */
+header {
+    background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+    padding: 15px 5%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    color: white;
+    font-weight: 700;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo:before {
+    content: "\f1ad";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 28px;
+}
+
+/* 导航栏样式 */
+nav ul {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0;
+    margin: 10px 0;
+    list-style: none;
+    width: 100%;
+}
+
+nav ul li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+nav ul li a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    padding: 12px 18px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.nav-item a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.nav-item a.active {
+    background: rgba(255, 255, 255, 0.15);
+    font-weight: 600;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+}
+
+.nav-item a:hover .icon {
+    transform: scale(1.1);
+}
+
+/* 搜索区域样式 */
+.search-form {
+    display: flex;
+    max-width: 500px;
+    width: 100%;
+    margin: 10px 0;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.search-box {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.search-box:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.search-box::placeholder {
+    color: #6c757d;
+}
+
+.search-button {
+    padding: 12px 25px;
+    background: #ffc107;
+    color: #212529;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-button:hover {
+    background: #e0a800;
+}
+
+/* 分隔线 */
+hr {
+    height: 1px;
+    background: linear-gradient(to right, #0056b3, #ffc107, #0056b3);
+    border: none;
+    margin: 0;
+}
+
+/* 个人中心主要容器 */
+.profile-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    flex: 1;
+}
+
+/* 主内容区域布局 */
+.main-content {
+    display: flex;
+    gap: 25px;
+}
+
+/* 左侧内容区域 */
+.left-content {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* 右侧内容区域 */
+.my-products {
+    flex: 1;
+    min-width: 320px;
+}
+
+/* 用户卡片样式 */
+.user-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ffc107;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-details {
+    flex: 1;
+}
+
+.username {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0056b3;
+    margin-bottom: 5px;
+}
+
+.user-id {
+    font-size: 16px;
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 5px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+/* 功能模块导航样式 */
+.function-modules {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.module-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.module-row:last-child {
+    margin-bottom: 0;
+}
+
+.module-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    flex: 1;
+    margin: 0 10px;
+    background: #f8f9fa;
+}
+
+.module-item:hover {
+    background: #e9f7ff;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.module-item a {
+    text-decoration: none;
+    /* 去掉下划线 */
+    display: flex;
+    /* 使用 flex 布局来确保内容正确排列 */
+    flex-direction: column;
+    /* 垂直排列 */
+    align-items: center;
+    /* 居中对齐 */
+    width: 100%;
+    /* 使 a 标签占据整个模块的宽度 */
+}
+
+.module-item i {
+    font-size: 24px;
+    /* 调整图标的大小 */
+    color: #495057;
+    /* 设定图标颜色 */
+}
+
+.module-item span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #495057;
+}
+
+/* 订单状态卡片样式 */
+.order-status {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.order-status h3 {
+    font-size: 20px;
+    color: #0056b3;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.status-items {
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    flex: 1;
+    margin: 0 5px;
+}
+
+.status-item:hover {
+    background: #f8f9fa;
+    transform: translateY(-5px);
+}
+
+.status-item img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #0056b3;
+    padding: 8px;
+}
+
+.status-item span {
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* 功能模块图标样式 */
+.module-item i {
+    font-size: 24px;
+    /* 图标大小 */
+    margin-bottom: 8px;
+    /* 图标与文字间距 */
+    color: #4CAF50;
+    /* 图标颜色 */
+}
+
+/* 订单状态图标样式 */
+.status-item i {
+    font-size: 22px;
+    /* 图标大小 */
+    margin-bottom: 5px;
+    /* 图标与文字间距 */
+    color: #FF5722;
+    /* 图标颜色 */
+}
+
+/* 移除原有图片样式 */
+.module-item img,
+.status-item img {
+    display: none;
+    /* 隐藏原有图片 */
+}
+
+/* 我的商品区域样式 */
+.my-products {
+    width: 100vw;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    height: fit-content;
+}
+
+.my-products h3 {
+    font-size: 20px;
+    color: #0056b3;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.product-list {
+    max-height: 543px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+/* 滚动条美化 */
+.product-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.product-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.product-list::-webkit-scrollbar-thumb {
+    background: #0056b3;
+    border-radius: 10px;
+}
+
+.product-list::-webkit-scrollbar-thumb:hover {
+    background: #003d82;
+}
+
+/* 商品项样式 */
+.product-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.product-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #ffc107;
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-info h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #0056b3;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e74c3c;
+    margin: 5px 0;
+}
+
+.status {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+.status.active {
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+}
+
+.status.inactive {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+}
+
+.remove-btn {
+    padding: 8px 15px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.remove-btn:hover {
+    background: #c82333;
+    transform: translateY(-3px);
+}
+
+/* 添加商品按钮 */
+.add-product-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-product-btn:hover {
+    background: linear-gradient(135deg, #218838, #28a745);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* 弹窗样式 */
+.add-product-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.modal-content h3 {
+    font-size: 26px;
+    margin-bottom: 25px;
+    color: #0056b3;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    text-align: center;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 280px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+    background: white;
+}
+
+.form-group textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.confirm-btn {
+    flex: 1;
+    padding: 14px;
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.confirm-btn:hover {
+    background: linear-gradient(135deg, #218838, #28a745);
+    transform: translateY(-3px);
+}
+
+.cancel-btn {
+    flex: 1;
+    padding: 14px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background: #5a6268;
+    transform: translateY(-3px);
+}
+
+/* 页脚样式 */
+footer {
+    background: #0056b3;
+    color: white;
+    padding: 25px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+
+footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+footer p {
+    font-size: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 992px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .my-products {
+        min-width: auto;
+    }
+
+    .module-row {
+        flex-wrap: wrap;
+    }
+
+    .module-item {
+        flex: 0 0 calc(50% - 20px);
+        margin: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .module-item {
+        flex: 0 0 100%;
+        margin: 10px 0;
+    }
+
+    .status-items {
+        flex-wrap: wrap;
+    }
+
+    .status-item {
+        flex: 0 0 calc(50% - 10px);
+        margin: 5px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        min-width: 100%;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .user-details {
+        margin-top: 15px;
+    }
+
+    .product-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .product-info {
+        width: 100%;
+    }
+}

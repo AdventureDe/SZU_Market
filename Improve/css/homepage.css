@@ -1,0 +1,469 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* 头部样式 */
+header {
+    background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+    padding: 15px 5%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    color: white;
+    font-weight: 700;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo:before {
+    content: "\f1ad";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 28px;
+}
+
+/* 导航栏样式 */
+nav ul {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0;
+    margin: 10px 0;
+    list-style: none;
+    width: 100%;
+}
+
+nav ul li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+nav ul li a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    padding: 12px 18px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.nav-item a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.nav-item a.active {
+    background: rgba(255, 255, 255, 0.15);
+    font-weight: 600;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+}
+
+.nav-item a:hover .icon {
+    transform: scale(1.1);
+}
+
+/* 搜索区域样式 */
+.search-form {
+    display: flex;
+    max-width: 500px;
+    width: 100%;
+    margin: 10px 0;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.search-box {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+.search-box:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.search-box::placeholder {
+    color: #6c757d;
+}
+
+.search-button {
+    padding: 12px 25px;
+    background: #ffc107;
+    color: #212529;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-button:hover {
+    background: #e0a800;
+}
+
+/* 分隔线 */
+hr {
+    height: 1px;
+    background: linear-gradient(to right, #0056b3, #ffc107, #0056b3);
+    border: none;
+    margin: 0;
+}
+
+/* 分类区域 */
+.content {
+    display: flex;
+    padding: 30px 5%;
+    background: linear-gradient(to bottom, #f0f8ff, #ffffff);
+}
+
+/* 左侧部分 */
+.divleft {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.left-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #0056b3;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.left-link:hover {
+    background: #e9f7ff;
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.15);
+}
+
+.left-img {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+}
+
+.left-link:hover .left-img {
+    transform: scale(1.1);
+}
+
+.description {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* 右侧部分 */
+.divright {
+    width: 75%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    padding: 0 20px;
+}
+
+.right-button {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: white;
+    padding: 20px 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #ffb300 0%, #f57c00 100%);
+}
+
+.button-description {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+/* 分隔线 */
+hr {
+    height: 1px;
+    background: linear-gradient(to right, #0056b3, #ffc107, #0056b3);
+    border: none;
+    margin: 0;
+}
+
+/* 商品展示区 */
+.product-section {
+    padding: 30px 5%;
+    background: #f8f9fa;
+}
+
+.section-title {
+    text-align: center;
+    margin: 20px 0 40px;
+    color: #0056b3;
+    position: relative;
+    font-size: 28px;
+}
+
+.section-title:after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: #ffc107;
+    margin: 10px auto;
+    border-radius: 2px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.product-item {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.product-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 3px solid #ffc107;
+}
+
+.product-info {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #0056b3;
+}
+
+.category,
+.description,
+.place,
+.date {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.price {
+    font-weight: 700;
+    font-size: 20px;
+    color: #e74c3c;
+    margin: 10px 0;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.star-icon {
+    font-size: 22px;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.star-icon.filled {
+    color: #ffc107;
+}
+
+.add-to-cart {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-to-cart:hover {
+    background: #218838;
+    transform: scale(1.05);
+}
+
+/* 通知样式 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 页脚样式 */
+footer {
+    background: #0056b3;
+    color: white;
+    padding: 25px 0;
+    text-align: center;
+}
+
+footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+footer p {
+    font-size: 16px;
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+    .divright {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .content {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .divleft,
+    .divright {
+        width: 100%;
+    }
+
+    .divleft {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .divright {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 26px;
+    }
+
+    .divright {
+        grid-template-columns: 1fr;
+    }
+
+    .product-list {
+        grid-template-columns: 1fr;
+    }
+
+    nav ul li a {
+        padding: 10px;
+        font-size: 14px;
+    }
+}

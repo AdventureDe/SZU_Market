@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://www1.szu.edu.cn/szu.ico" type="image/x-icon" rel="shortcut icon">
+    <title>深大特色时令产品集市平台 - 管理员</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/administratorpage.css">
+</head>
+
+<body>
+    <header class="admin-header">
+        <div class="logo">深大集市 <span class="admin-badge">管理员</span></div>
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="搜索商品名称、类别或产地..." class="search-box">
+            <button type="submit" class="search-button">搜索</button>
+        </form>
+
+        <!-- 管理员导航栏 -->
+        <nav class="admin-nav">
+            <ul>
+                <li>
+                    <a href="#" class="active">
+                        <i class="fas fa-boxes icon"></i>
+                        <span>商品管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-users icon"></i>
+                        <span>用户管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-chart-line icon"></i>
+                        <span>数据分析</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-cog icon"></i>
+                        <span>系统设置</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <hr>
+
+    <!-- 管理员面板 -->
+    <div class="admin-panel">
+        <div class="admin-actions">
+            <div class="admin-action">
+                <i class="fas fa-plus-circle"></i>
+                <div>
+                    <h3>添加新商品</h3>
+                    <p>添加新的时令产品到平台</p>
+                </div>
+            </div>
+
+            <div class="admin-action">
+                <i class="fas fa-tags"></i>
+                <div>
+                    <h3>管理商品分类</h3>
+                    <p>添加或编辑商品分类</p>
+                </div>
+            </div>
+
+            <div class="admin-action">
+                <i class="fas fa-file-alt"></i>
+                <div>
+                    <h3>查看销售报告</h3>
+                    <p>分析平台销售数据</p>
+                </div>
+            </div>
+
+            <div class="admin-action">
+                <i class="fas fa-user-shield"></i>
+                <div>
+                    <h3>管理用户权限</h3>
+                    <p>设置用户角色和权限</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品展示区 -->
+        <section class="admin-product-section">
+            <h2 class="section-title">平台商品管理</h2>
+            <div class="container">
+                <div class="product-list">
+                    <!-- 商品卡片将通过JS动态生成 -->
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 @2022280310_Lhs | 深大特色时令产品集市平台. 版权所有.</p>
+        </div>
+    </footer>
+
+    <!-- 通知 -->
+    <div class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>商品已成功下架！</span>
+    </div>
+    <script src="./js/administratorpage.js"></script>
+</body>
+
+</html>

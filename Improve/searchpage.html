@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://www1.szu.edu.cn/szu.ico" type="image/x-icon" rel="shortcut icon">
+    <title>深大特色时令产品集市平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./css/searchpage.css">
+</head>
+
+<body>
+    <header>
+        <h1 class="logo">深大集市</h1>
+        <div class="container">
+            <nav class="app-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="./homepage.html">
+                            <i class="fas fa-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>消息</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./cartpage.html">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>购物车</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./personalpage.html">
+                            <i class="fas fa-user-circle"></i>
+                            <span>我的</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="请输入搜索内容..." class="search-box">
+            <button type="submit" class="search-button">搜索</button>
+        </form>
+    </header>
+
+    <div class="search-results-container">
+        <h2 id="search-title">搜索结果</h2>
+        <div class="search-results" id="search-results">
+            <!-- 结果将通过JS动态填充 -->
+
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 @2022280310_Lhs | 深大特色时令产品集市平台. 版权所有.</p>
+        </div>
+    </footer>
+
+    <script src="./js/searchpage.js"></script>
+</body>
+
+</html>

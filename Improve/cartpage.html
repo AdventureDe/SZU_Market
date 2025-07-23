@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://www1.szu.edu.cn/szu.ico" type="image/x-icon" rel="shortcut icon">
+    <title>深大集市 - 购物车</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./css/cartpage.css">
+</head>
+
+<body>
+    <header>
+        <h1 class="logo">深大集市</h1>
+        <div class="container">
+            <nav class="app-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="./homepage.html">
+                            <i class="fas fa-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>消息</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./cartpage.html">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>购物车</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./personalpage.html">
+                            <i class="fas fa-user-circle"></i>
+                            <span>我的</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="请输入搜索内容..." class="search-box">
+            <button type="submit" class="search-button">搜索</button>
+        </form>
+    </header>
+
+    <hr>
+
+    <!-- 购物车内容区域 -->
+    <div class="cart-container">
+        <h2 class="cart-header">我的购物车</h2>
+
+        <!-- 购物车商品列表 -->
+        <div class="cart-items">
+            <!-- 示例商品1 -->
+            <div class="cart-item" data-product-id="1">
+                <div class="item-checkbox">
+                    <input type="checkbox" class="select-item" checked>
+                </div>
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?q=80&w=1170" alt="深大荔枝">
+                </div>
+                <div class="item-info">
+                    <h3 class="item-title">深大荔枝</h3>
+                    <p class="item-desc">来自深大校园的优质荔枝，果肉饱满，汁水丰富，甜度适中</p>
+                    <div class="item-price-qty">
+                        <span class="price">¥28.8</span>
+                        <div class="quantity-control">
+                            <button class="decrease">-</button>
+                            <input type="number" value="2" min="1" class="qty-input">
+                            <button class="increase">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="delete-item"><i class="fas fa-trash-alt"></i> 删除</button>
+                </div>
+            </div>
+
+            <!-- 示例商品2 -->
+            <div class="cart-item" data-product-id="2">
+                <div class="item-checkbox">
+                    <input type="checkbox" class="select-item" checked>
+                </div>
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?q=80&w=1170" alt="文山湖蜂蜜">
+                </div>
+                <div class="item-info">
+                    <h3 class="item-title">文山湖蜂蜜</h3>
+                    <p class="item-desc">深大文山湖自产纯天然蜂蜜，无添加，口感纯正</p>
+                    <div class="item-price-qty">
+                        <span class="price">¥88.0</span>
+                        <div class="quantity-control">
+                            <button class="decrease">-</button>
+                            <input type="number" value="1" min="1" class="qty-input">
+                            <button class="increase">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="delete-item"><i class="fas fa-trash-alt"></i> 删除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 购物车底部 -->
+        <div class="cart-footer">
+            <div class="select-all">
+                <input type="checkbox" id="selectAll" checked>
+                <label for="selectAll">全选</label>
+            </div>
+            <div class="cart-total">
+                <span>合计：</span>
+                <span class="total-price">¥145.6</span>
+            </div>
+            <button class="checkout-btn"><i class="fas fa-shopping-cart"></i> 结算</button>
+        </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="modal-content">
+            <h2>订单确认</h2>
+            <p>总价：<span class="modal-total-price">¥145.6</span></p>
+
+            <!-- 添加一个隐藏的元素来存储订单ID -->
+            <span class="order-id" style="display:none;">ORD123456</span> <!-- 隐藏订单ID -->
+
+            <div class="modal-buttons">
+                <button class="modal-btn" id="payOrderBtn">支付订单</button>
+                <button class="modal-btn" id="cancelOrderBtn">取消订单</button>
+                <button class="modal-btn" id="closeModalBtn">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/cartpage.js"></script>
+</body>
+
+</html>

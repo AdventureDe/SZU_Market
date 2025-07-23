@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://www1.szu.edu.cn/szu.ico" type="image/x-icon" rel="shortcut icon">
+    <title>深大特色时令产品集市平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./css/loginpage.css">
+</head>
+
+<body>
+
+    <!-- 动态星空背景 -->
+    <div class="stars" id="stars-container"></div>
+
+    <!-- 角色切换下拉菜单 -->
+    <div class="role-selector">
+        <label for="role">角色:</label>
+        <select id="role">
+            <option value="user">用户</option>
+            <option value="admin">管理员</option>
+        </select>
+    </div>
+
+    <div class="login-container">
+        <h2>深大集市</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <div class="icon-wrapper">
+                    <i class="fas fa-user"></i>
+                </div>
+                <input type="text" class="input-field" id="username" placeholder="用户名" required>
+            </div>
+
+            <div class="form-group">
+                <div class="icon-wrapper">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <input type="password" class="input-field" id="password" placeholder="密码" required>
+            </div>
+
+            <div class="error" id="error-message">用户名或密码错误</div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> 登录
+                </button>
+                <button type="button" class="btn btn-register" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> 注册
+                </button>
+            </div>
+        </form>
+
+        <div class="additional-info">
+            <p>深圳大学 @2024 | 深大特色时令产品集市平台</p>
+        </div>
+    </div>
+
+    <div class="szu-logo">深圳大学</div>
+
+    <script src="./js/loginpage.js"></script>
+</body>
+
+</html>

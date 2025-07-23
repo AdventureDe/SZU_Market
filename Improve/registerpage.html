@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://www1.szu.edu.cn/szu.ico" type="image/x-icon" rel="shortcut icon">
+    <title>深大特色时令产品集市平台 - 注册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./css/registerpage.css">
+</head>
+
+<body>
+
+    <!-- 动态星空背景 -->
+    <div class="stars" id="stars-container"></div>
+
+    <div class="register-container">
+        <form id="RegisterForm">
+            <h2>深大集市注册</h2>
+
+            <div class="form-group">
+                <div class="form-row">
+                    <select class="country-select" id="countryCode" name="countryCode" required>
+                        <option value="+1">+1 美国</option>
+                        <option value="+44">+44 英国</option>
+                        <option value="+86" selected>+86 中国</option>
+                        <option value="+91">+91 印度</option>
+                        <option value="+81">+81 日本</option>
+                    </select>
+                    <input type="tel" class="phone-input" id="phone" name="phone" placeholder="手机号码" required>
+                </div>
+
+                <div class="verification-group">
+                    <input type="text" class="verification-input" id="verificationCode" placeholder="验证码" required>
+                    <button type="button" class="get-verification-btn" id="getID">获取验证码</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="icon-wrapper">
+                    <i class="fas fa-user"></i>
+                </div>
+                <input type="text" class="input-field" id="username" placeholder="用户名" required>
+            </div>
+
+            <div class="form-group">
+                <div class="icon-wrapper">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <input type="password" class="input-field" id="password" placeholder="密码 (至少8位)" required>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> 立即注册
+                </button>
+                <button type="button" class="btn btn-secondary" id="backToLoginBtn">
+                    <i class="fas fa-arrow-left"></i> 返回登录
+                </button>
+            </div>
+        </form>
+
+        <div class="additional-info">
+            <p>深圳大学 @2024 | 深大特色时令产品集市平台</p>
+        </div>
+    </div>
+
+    <div class="szu-logo">深圳大学</div>
+
+    <script src="./js/registerpage.js"></script>
+</body>
+
+</html>

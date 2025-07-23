@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://www1.szu.edu.cn/szu.ico" type="image/x-icon" rel="shortcut icon">
+    <title>深大特色时令产品集市平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./css/personalpage.css">
+</head>
+
+<body>
+    <header>
+        <h1 class="logo">深大集市</h1>
+        <div class="container">
+            <nav class="app-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="./homepage.html">
+                            <i class="fas fa-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>消息</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./cartpage.html">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>购物车</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./personalpage.html">
+                            <i class="fas fa-user-circle"></i>
+                            <span>我的</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <form action="/search" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="请输入搜索内容..." class="search-box">
+            <button type="submit" class="search-button">搜索</button>
+        </form>
+    </header>
+
+    <hr style="background-color: #333; ">
+    <!-- 个人中心主要内容 -->
+    <div class="profile-container">
+        <div class="main-content">
+            <!-- 左侧内容 -->
+            <div class="left-content">
+                <!-- 用户信息卡片 -->
+                <div class="user-card">
+                    <div class="user-info">
+                        <img src="all_pic/default-avatar.jpg" alt="用户头像" class="avatar">
+                        <div class="user-details">
+                            <h2 class="username">未登录</h2>
+                            <p class="user-id">ID: 未登录</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 功能模块导航 -->
+                <div class="function-modules">
+                    <div class="module-row">
+                        <div class="module-item">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>我的订单</span>
+                        </div>
+                        <div class="module-item">
+                            <a href="./myfavoritepage.html">
+                                <i class="fas fa-heart"></i>
+                                <span>我的收藏</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>收货地址</span>
+                        </div>
+                    </div>
+
+                    <div class="module-row">
+                        <div class="module-item">
+                            <i class="fas fa-cog"></i>
+                            <span>设置</span>
+                        </div>
+                        <div class="module-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>帮助中心</span>
+                        </div>
+                        <div class="module-item">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>意见反馈</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 订单状态卡片 -->
+                <div class="order-status">
+                    <h3>我的订单</h3>
+                    <div class="status-items">
+                        <div class="status-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>待付款</span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-truck-loading"></i>
+                            <span>待发货</span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-truck"></i>
+                            <span>待收货</span>
+                        </div>
+                        <div class="status-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>已完成</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧商品卡片 -->
+            <div class="my-products">
+                <h3>我的商品</h3>
+                <div class="product-list">
+
+                </div>
+                <button class="add-product-btn" onclick="openAddProductModal()">+ 添加商品</button>
+            </div>
+        </div>
+    </div>
+    <div class="add-product-modal" id="addProductModal">
+        <div class="modal-content">
+            <h3>添加商品</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productImage">商品图片：</label>
+                    <input type="file" id="productImage" accept="image/*" onchange="getFileName(event)">
+                </div>
+
+                <div class="form-group">
+                    <label for="productName">商品名称:</label>
+                    <input type="text" id="productName" placeholder="输入商品名称">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productPrice">商品价格:</label>
+                    <input type="number" id="productPrice" placeholder="输入商品价格">
+                </div>
+
+                <div class="form-group">
+                    <label for="productSalesPeriod">商品销售期:</label>
+                    <input type="text" id="productSalesPeriod" placeholder="输入商品销售期">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productCategory">商品分类:</label>
+                    <input type="text" id="productCategory" placeholder="输入商品分类">
+                </div>
+
+                <div class="form-group">
+                    <label for="productOrigin">商品产地:</label>
+                    <input type="text" id="productOrigin" placeholder="输入商品产地">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productDescription">商品描述:</label>
+                    <textarea id="productDescription" placeholder="输入商品描述" maxlength="200"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="confirm-btn" id="confirmAddProduct" onclick="addProduct()">确认添加</button>
+                <button class="cancel-btn" onclick="closeAddProductModal()">取消</button>
+            </div>
+        </div>
+
+    </div>
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 @2022280310_Lhs | 深大特色时令产品集市平台. 版权所有.</p>
+        </div>
+    </footer>
+
+    <script src="./js/personalpage.js"></script>
+</body>
+
+</html>
