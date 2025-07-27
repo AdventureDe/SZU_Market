@@ -71,9 +71,6 @@
                     <div class="item-price-qty">
                         <span class="price">¥28.8</span>
                         <div class="quantity-control">
-                            <button class="decrease">-</button>
-                            <input type="number" value="2" min="1" class="qty-input">
-                            <button class="increase">+</button>
                         </div>
                     </div>
                 </div>
@@ -96,9 +93,6 @@
                     <div class="item-price-qty">
                         <span class="price">¥88.0</span>
                         <div class="quantity-control">
-                            <button class="decrease">-</button>
-                            <input type="number" value="1" min="1" class="qty-input">
-                            <button class="increase">+</button>
                         </div>
                     </div>
                 </div>
@@ -122,23 +116,229 @@
         </div>
     </div>
 
-    <!-- 弹窗 -->
+    <!-- 弹窗部分 -->
     <div class="checkout-modal" id="checkoutModal">
         <div class="modal-content">
-            <h2>订单确认</h2>
-            <p>总价：<span class="modal-total-price">¥145.6</span></p>
+            <div class="modal-header">
+                <h2>订单结算</h2>
+                <button class="modal-close" id="closeModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
 
-            <!-- 添加一个隐藏的元素来存储订单ID -->
-            <span class="order-id" style="display:none;">ORD123456</span> <!-- 隐藏订单ID -->
+            <div class="modal-body">
+                <!-- 步骤指示器优化 -->
+                <div class="checkout-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-indicator">
+                            <div class="step-number">1</div>
+                            <div class="step-title">商品清单</div>
+                        </div>
+                        <div class="step-description">确认购买商品</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-indicator">
+                            <div class="step-number">2</div>
+                            <div class="step-title">收货地址</div>
+                        </div>
+                        <div class="step-description">选择配送地址</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-indicator">
+                            <div class="step-number">3</div>
+                            <div class="step-title">支付方式</div>
+                        </div>
+                        <div class="step-description">选择支付方式</div>
+                    </div>
+                </div>
 
-            <div class="modal-buttons">
-                <button class="modal-btn" id="payOrderBtn">支付订单</button>
-                <button class="modal-btn" id="cancelOrderBtn">取消订单</button>
-                <button class="modal-btn" id="closeModalBtn">关闭</button>
+                <div class="checkout-content">
+                    <!-- 步骤1: 商品清单 -->
+                    <div class="step-content active" id="step1">
+                        <h3 class="section-title">商品清单</h3>
+                        <div class="checkout-items">
+                            <!-- 商品项会在这里动态加载 -->
+
+                        </div>
+                    </div>
+
+                    <!-- 步骤2: 收货地址 -->
+                    <div class="step-content" id="step2">
+                        <div class="address-section">
+                            <h3 class="section-title">选择收货地址</h3>
+                        </div>
+
+                        <div class="address-list" id="addressList">
+                            <!-- 地址卡片会动态加载 -->
+                        </div>
+                    </div>
+
+                    <!-- 步骤3: 支付方式 -->
+                    <div class="step-content" id="step3">
+                        <h3 class="section-title">选择支付方式</h3>
+
+                        <div class="payment-options">
+                            <div class="payment-option active" data-payment="alipay">
+                                <div class="payment-icon">
+                                    <i class="fab fa-alipay"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-title">支付宝支付</div>
+                                    <div class="payment-desc">推荐使用支付宝扫码支付</div>
+                                </div>
+                                <div class="payment-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+
+                            <div class="payment-option" data-payment="wechat">
+                                <div class="payment-icon">
+                                    <i class="fab fa-weixin"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-title">微信支付</div>
+                                    <div class="payment-desc">微信安全支付</div>
+                                </div>
+                                <div class="payment-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+
+                            <div class="payment-option" data-payment="card">
+                                <div class="payment-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-title">银行卡支付</div>
+                                    <div class="payment-desc">储蓄卡/信用卡</div>
+                                </div>
+                                <div class="payment-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-summary">
+                            <!-- 摘要内容保持不变 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="modal-btn btn-prev" id="prevStepBtn">
+                    <i class="fas fa-arrow-left"></i> 上一步
+                </button>
+                <button class="modal-btn btn-add" id="addAddressBtn">
+                    <i class="fas fa-plus"></i> 添加新地址
+                </button>
+                <div class="footer-actions">
+                    <button class="modal-btn btn-cancel" id="cancelOrderBtn">取消</button>
+
+                    <button class="modal-btn btn-next" id="nextStepBtn">下一步</button>
+                    <button class="modal-btn btn-pay" id="payOrderBtn">确认支付</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- 添加地址弹窗 -->
+    <div class="address-modal" id="addressModal">
+        <div class="address-modal-content">
+            <div class="address-modal-header">
+                <h2 class="address-modal-title">添加收货地址</h2>
+                <button class="address-modal-close" id="closeAddressModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="address-modal-body">
+                <form id="addressForm">
+                    <div class="address-form-row">
+                        <div class="address-form-group">
+                            <label class="address-form-label" for="recipient">收货人 <span>*</span></label>
+                            <input type="text" id="recipient" class="address-form-input" placeholder="请输入收货人姓名"
+                                required>
+                        </div>
+
+                        <div class="address-form-group">
+                            <label class="address-form-label" for="phone">手机号码 <span>*</span></label>
+                            <input type="tel" id="phone" class="address-form-input" placeholder="请输入11位手机号码" required>
+                        </div>
+                    </div>
+
+                    <div class="address-form-group">
+                        <label class="address-form-label" for="country">国家/地区 <span>*</span></label>
+                        <select id="country" class="address-form-select" required>
+                            <option value="">请选择国家</option>
+                            <option value="china" selected>中国</option>
+                            <option value="usa">美国</option>
+                            <option value="uk">英国</option>
+                            <option value="japan">日本</option>
+                            <option value="korea">韩国</option>
+                        </select>
+                    </div>
+
+                    <div class="region-selectors">
+                        <div class="address-form-group region-selector">
+                            <label class="address-form-label" for="province">省份 <span>*</span></label>
+                            <select id="province" class="address-form-select" required>
+                                <option value="">请选择省份</option>
+                                <option value="gd">广东省</option>
+                                <option value="zj">浙江省</option>
+                                <option value="js">江苏省</option>
+                                <option value="bj">北京市</option>
+                                <option value="sh">上海市</option>
+                            </select>
+                        </div>
+
+                        <div class="address-form-group region-selector">
+                            <label class="address-form-label" for="city">城市 <span>*</span></label>
+                            <select id="city" class="address-form-select" required>
+                                <option value="">请选择城市</option>
+                                <option value="sz">深圳市</option>
+                                <option value="gz">广州市</option>
+                                <option value="hz">杭州市</option>
+                                <option value="nj">南京市</option>
+                            </select>
+                        </div>
+
+                        <div class="address-form-group region-selector">
+                            <label class="address-form-label" for="district">区县 <span>*</span></label>
+                            <select id="district" class="address-form-select" required>
+                                <option value="">请选择区县</option>
+                                <option value="nanshan">南山区</option>
+                                <option value="futian">福田区</option>
+                                <option value="luohu">罗湖区</option>
+                                <option value="baoan">宝安区</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="address-form-group">
+                        <label class="address-form-label" for="detail">详细地址 <span>*</span></label>
+                        <input type="text" id="detail" class="address-form-input" placeholder="街道、小区、楼栋号、房间号等" required>
+                        <p class="address-form-note">无需重复填写省市区，5-60个字符，不要填写特殊符号</p>
+                    </div>
+
+                    <div class="address-form-group">
+                        <label class="address-form-label" for="postalCode">邮政编码</label>
+                        <input type="text" id="postalCode" class="address-form-input" placeholder="请输入邮政编码（选填）">
+                    </div>
+
+                    <div class="address-form-checkbox">
+                        <input type="checkbox" id="setDefault" checked>
+                        <label for="setDefault">设为默认收货地址</label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="address-form-footer">
+                <button class="address-form-btn btn-cancel" id="cancelAddressBtn">取消</button>
+                <button type="submit" form="addressForm" class="address-form-btn btn-save">保存地址</button>
+            </div>
+        </div>
+    </div>
     <script src="./js/cartpage.js"></script>
 </body>
 

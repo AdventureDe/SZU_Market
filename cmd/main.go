@@ -22,9 +22,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("数据库初始化失败: %v", err)
 	}
+	// 启动Kafka消费者（并发启动多个消费者）
+	consumerService := order.NewConsumerService(db.DB)
+
+	// 启动所有消费者（后台运行）
+	go consumerService.StartConsumers()
 
 	r := gin.Default()
-
 	// 配置CORS（更安全的配置）
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true

@@ -27,6 +27,7 @@ type SpecialProduct struct {
 	IsActive           bool      `gorm:"default:true" json:"is_active"`
 	IsViolation        bool      `gorm:"default:false" json:"is_violation"`
 	ImageURL           string    `gorm:"type:varchar(255)" json:"image_url"`
+	Sales              uint      `gorm:"type:not null" json:"sales"`
 }
 
 func (SpecialProduct) TableName() string {
@@ -45,14 +46,29 @@ type CartItem struct {
 
 // 订单模型
 type Order struct {
-	OrderID         uint      `gorm:"primaryKey;autoIncrement" json:"order_id"`
-	UserID          uint      `gorm:"not null" json:"user_id"`
-	TotalPrice      float64   `gorm:"type:decimal(10,2);not null" json:"total_price"`
-	Created_at      time.Time `gorm:"autoCreateTime" json:"created_date"`
-	Updated_at      time.Time `gorm:"autoUpdateTime" json:"updated_date"`
-	Status          string    `gorm:"type:enum('待付款','等待发货','已发货','已收货');default:'待付款'" json:"status"`
-	PaymentStatus   string    `gorm:"type:enum('未付款','已付款');default:'未付款'" json:"payment_status"`
-	ShippingAddress string    `gorm:"type:text" json:"shippingaddress"`
+	OrderID       uint           `gorm:"primaryKey;autoIncrement" json:"order_id"`
+	UserID        uint           `gorm:"not null" json:"user_id"`
+	TotalPrice    float64        `gorm:"type:decimal(10,2);not null" json:"total_price"`
+	Status        string         `gorm:"type:enum('待付款','等待发货','已发货','已收货');default:'待付款'" json:"status"`
+	PaymentStatus string         `gorm:"type:enum('未付款','已付款');default:'未付款'" json:"payment_status"`
+	AddressID     uint           `gorm:"not null" json:"address_id"`
+	OrderProducts []OrderProduct `gorm:"foreignKey:OrderID"`
+}
+
+type Address struct {
+	AddressID  uint      `gorm:"primaryKey;autoIncrement" json:"address_id"`
+	UserID     uint      `gorm:"not null" json:"user_id"`
+	Recipient  string    `gorm:"type:varchar(100);not null" json:"recipient"`
+	Phone      string    `gorm:"type:varchar(100);not null" json:"phone"`
+	Country    string    `gorm:"type:varchar(100);not null" json:"country"`
+	Province   string    `gorm:"type:varchar(100);not null" json:"province"`
+	City       string    `gorm:"type:varchar(100);not null" json:"city"`
+	District   string    `gorm:"type:varchar(100);not null" json:"district"`
+	Street     string    `gorm:"type:varchar(255);not null" json:"street"`
+	IsDefault  bool      `gorm:"default:false" json:"is_default"`
+	Created_at time.Time `gorm:"autoCreateTime" json:"created_date"`
+	Updated_at time.Time `gorm:"autoUpdateTime" json:"updated_date"`
+	Stamp      string    `gorm:"type:varchar(20);" json:"stamp"`
 }
 
 // UserInfoResponse 用户信息响应结构
@@ -74,4 +90,11 @@ type Favorite struct {
 
 func (Favorite) TableName() string {
 	return "favorite"
+}
+
+type OrderProduct struct {
+	OrderProductID uint `gorm:"primaryKey;autoIncrement;column:order_product_id" json:"order_product_id"`
+	OrderID        uint `gorm:"not null;index" json:"order_id"`
+	ProductID      uint `gorm:"not null;index" json:"product_id"`
+	Num            uint `gorm:"not null;column:num" json:"num"`
 }
