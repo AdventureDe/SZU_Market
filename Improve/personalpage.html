@@ -69,58 +69,76 @@
                 <!-- 功能模块导航 -->
                 <div class="function-modules">
                     <div class="module-row">
-                        <div class="module-item">
+                        <div class="module-item" data-modal="orders">
                             <i class="fas fa-clipboard-list"></i>
                             <span>我的订单</span>
                         </div>
-                        <div class="module-item">
-                            <a href="./myfavoritepage.html">
-                                <i class="fas fa-heart"></i>
-                                <span>我的收藏</span>
-                            </a>
+                        <div class="module-item" data-modal="favorites">
+                            <i class="fas fa-heart"></i>
+                            <span>我的收藏</span>
                         </div>
-                        <div class="module-item">
+                        <div class="module-item" data-modal="address">
                             <i class="fas fa-map-marker-alt"></i>
                             <span>收货地址</span>
                         </div>
                     </div>
 
                     <div class="module-row">
-                        <div class="module-item">
+                        <div class="module-item" data-modal="settings">
                             <i class="fas fa-cog"></i>
                             <span>设置</span>
                         </div>
-                        <div class="module-item">
+                        <div class="module-item" data-modal="help">
                             <i class="fas fa-question-circle"></i>
                             <span>帮助中心</span>
                         </div>
-                        <div class="module-item">
+                        <div class="module-item" data-modal="feedback">
                             <i class="fas fa-comment-alt"></i>
                             <span>意见反馈</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 订单状态卡片 -->
                 <div class="order-status">
                     <h3>我的订单</h3>
                     <div class="status-items">
-                        <div class="status-item">
+                        <div class="status-item" data-modal="waiting-payment">
                             <i class="fas fa-money-bill-wave"></i>
                             <span>待付款</span>
                         </div>
-                        <div class="status-item">
+                        <div class="status-item" data-modal="waiting-shipment">
                             <i class="fas fa-truck-loading"></i>
                             <span>待发货</span>
                         </div>
-                        <div class="status-item">
+                        <div class="status-item" data-modal="waiting-receive">
                             <i class="fas fa-truck"></i>
                             <span>待收货</span>
                         </div>
-                        <div class="status-item">
+                        <div class="status-item" data-modal="completed">
                             <i class="fas fa-check-circle"></i>
                             <span>已完成</span>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 功能模块弹窗结构 -->
+            <div class="modal-overlay" id="modalOverlay">
+                <div class="modalContent">
+                    <div class="modal-header">
+                        <h2 id="modalTitle">
+                            弹窗标题
+                        </h2>
+                        <div class="modal-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="close-btn" id="closeModal">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        <!-- 动态内容 -->
+
                     </div>
                 </div>
             </div>
@@ -135,6 +153,8 @@
             </div>
         </div>
     </div>
+
+    <!-- 添加商品弹窗 -->
     <div class="add-product-modal" id="addProductModal">
         <div class="modal-content">
             <h3>添加商品</h3>

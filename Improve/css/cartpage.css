@@ -1641,10 +1641,13 @@ input[type="checkbox"] {
     right: 25px;
     display: flex;
     gap: 12px;
+    align-items: center;
 }
 
+/* 两个按钮保持不变 */
 .delete-address,
 .set-default {
+    height: 36px;
     padding: 8px 15px;
     border-radius: 6px;
     font-size: 14px;
@@ -1676,17 +1679,20 @@ input[type="checkbox"] {
     background: #e0f2fe;
 }
 
+/* 默认标签变成按钮风格，放在最左边 */
 .default-address-tag {
     background: #3498db;
     color: white;
-    padding: 4px 10px;
+    padding: 8px 15px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 14px;
     font-weight: 600;
-    position: absolute;
-    top: 15px;
-    right: 15px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     animation: pulse 2s infinite;
+    white-space: nowrap;
 }
 
 @keyframes pulse {

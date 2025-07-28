@@ -1,11 +1,13 @@
 package cart
 
 import (
+	"context"
 	"errors"
 	"fmt"
-	"time"
-
+	"log"
+	"strconv"
 	"szu_market/internal/db"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -33,8 +35,15 @@ type CartItemResponse struct {
 
 // GetCartItems 获取用户购物车项
 func (s *CartService) GetCartItems(userID uint) ([]CartItemResponse, error) {
-	var results []CartItemResponse
+	key := fmt.Sprintf("cart:%d", userID)
 
+	// 1. 先尝试从Redis获取完整购物车
+	if cartMap, err := db.RDB.HGetAll(context.Background(), key).Result(); err == nil && len(cartMap) > 0 {
+		return s.buildCartFromRedis(userID, cartMap)
+	}
+
+	// 2. Redis无数据时从数据库加载
+	var results []CartItemResponse
 	err := s.DB.Table("cart_items").
 		Select("cart_items.cart_id, specialproduct.product_id, specialproduct.product_name, "+
 			"specialproduct.product_description, specialproduct.price, specialproduct.image_url, "+
@@ -45,6 +54,57 @@ func (s *CartService) GetCartItems(userID uint) ([]CartItemResponse, error) {
 
 	if err != nil {
 		return nil, fmt.Errorf("查询失败: %w", err)
+	}
+
+	// 3. 将数据库数据写入Redis缓存
+	go s.cacheCartItems(userID, results)
+
+	return results, nil
+}
+
+// 将DB结果缓存到Redis
+func (s *CartService) cacheCartItems(userID uint, items []CartItemResponse) {
+	key := fmt.Sprintf("cart:%d", userID)
+	pipe := db.RDB.Pipeline()
+
+	for _, item := range items {
+		pipe.HSet(context.Background(), key,
+			strconv.Itoa(int(item.ProductID)),
+			item.Quantity)
+	}
+	pipe.Expire(context.Background(), key, 24*time.Hour)
+	_, err := pipe.Exec(context.Background()) // 传入 context
+	if err != nil {
+		log.Printf("WARN: Redis pipeline execution failed: %v", err)
+	}
+}
+
+// 从Redis数据构建响应
+func (s *CartService) buildCartFromRedis(userID uint, cartMap map[string]string) ([]CartItemResponse, error) {
+	var productIDs []uint
+	for pid := range cartMap {
+		id, _ := strconv.ParseUint(pid, 10, 32)
+		productIDs = append(productIDs, uint(id))
+	}
+
+	// 从数据库获取商品详情
+	var products []db.SpecialProduct
+	if err := s.DB.Where("product_id IN ?", productIDs).Find(&products).Error; err != nil {
+		return nil, err
+	}
+
+	// 构建响应
+	var results []CartItemResponse
+	for _, p := range products {
+		qty, _ := strconv.Atoi(cartMap[strconv.Itoa(int(p.ProductID))])
+		results = append(results, CartItemResponse{
+			ProductID:          p.ProductID,
+			ProductName:        p.ProductName,
+			ProductDescription: p.ProductDescription,
+			Price:              p.Price,
+			ImageURL:           p.ImageURL,
+			Quantity:           qty,
+		})
 	}
 
 	return results, nil
@@ -59,56 +119,48 @@ type AddToCartInput struct {
 
 // AddToCart 添加商品到购物车
 func (s *CartService) AddToCart(input *AddToCartInput) error {
-	// 验证输入
+	// 1. 参数验证
 	if input.UserID == 0 || input.ProductID == 0 {
-		return errors.New("无效的用户或商品ID")
+		return errors.New("invalid user/product ID")
 	}
-
-	// 确保数量至少为1
 	if input.Quantity <= 0 {
 		input.Quantity = 1
 	}
 
-	// 检查商品是否存在
+	// 2. 检查商品是否存在 (先于Redis操作)
 	var product db.SpecialProduct
 	if err := s.DB.First(&product, input.ProductID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("商品不存在")
+			return errors.New("product not exist")
 		}
-		return fmt.Errorf("查询商品失败: %w", err)
+		return fmt.Errorf("query product failed: %w", err)
 	}
 
-	// 查找现有购物车项
-	var cartItem db.CartItem
-	err := s.DB.Where("user_id = ? AND product_id = ? AND status = ?",
-		input.UserID, input.ProductID, "in_cart").
-		First(&cartItem).Error
-
-	if err == nil {
-		// 商品已在购物车中，更新数量
-		cartItem.Quantity += input.Quantity
-		if err := s.DB.Save(&cartItem).Error; err != nil {
-			return fmt.Errorf("更新购物车失败: %w", err)
-		}
-		return nil
+	// 3. 更新数据库 (使用原子操作避免并发问题)
+	result := s.DB.Exec(`
+        INSERT INTO cart_items (user_id, product_id, quantity, status) 
+        VALUES (?, ?, ?, 'in_cart')
+        ON DUPLICATE KEY UPDATE quantity = quantity + ?`,
+		input.UserID, input.ProductID, input.Quantity, input.Quantity,
+	)
+	if result.Error != nil {
+		return fmt.Errorf("update DB failed: %w", result.Error)
 	}
 
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return fmt.Errorf("查询购物车失败: %w", err)
+	// 4. 更新Redis (原子操作)
+	key := fmt.Sprintf("cart:%d", input.UserID)
+	if err := db.RDB.HIncrBy(
+		context.Background(),
+		key,
+		strconv.FormatUint(uint64(input.ProductID), 10),
+		int64(input.Quantity),
+	).Err(); err != nil {
+		log.Printf("WARN: update redis failed: %v", err)
+		// 可加入重试机制或异步修复队列
 	}
 
-	// 创建新购物车项
-	newItem := db.CartItem{
-		UserID:    input.UserID,
-		ProductID: input.ProductID,
-		Quantity:  input.Quantity,
-		Status:    "in_cart",
-		AddTime:   time.Now(),
-	}
-
-	if err := s.DB.Create(&newItem).Error; err != nil {
-		return fmt.Errorf("添加购物车失败: %w", err)
-	}
+	// 5. 设置缓存过期时间
+	db.RDB.Expire(context.Background(), key, 7*24*time.Hour)
 
 	return nil
 }
@@ -121,25 +173,26 @@ type RemoveCartItemInput struct {
 
 // RemoveCartItem 从购物车中删除商品
 func (s *CartService) RemoveCartItem(input *RemoveCartItemInput) error {
-	// 验证输入
 	if input.UserID == 0 || input.ProductID == 0 {
 		return errors.New("无效的用户或商品ID")
 	}
 
-	// 查找购物车项
-	var cartItem db.CartItem
+	// 先操作数据库
 	if err := s.DB.Where("user_id = ? AND product_id = ? AND status = ?",
 		input.UserID, input.ProductID, "in_cart").
-		First(&cartItem).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("购物车中未找到该商品")
-		}
-		return fmt.Errorf("查询购物车失败: %w", err)
+		Delete(&db.CartItem{}).Error; err != nil {
+		return fmt.Errorf("删除购物车项失败: %w", err)
 	}
 
-	// 删除购物车项
-	if err := s.DB.Delete(&cartItem).Error; err != nil {
-		return fmt.Errorf("删除购物车项失败: %w", err)
+	// 再操作Redis
+	key := fmt.Sprintf("cart:%d", input.UserID)
+	if err := db.RDB.HDel(
+		context.Background(),
+		key,
+		strconv.Itoa(int(input.ProductID)),
+	).Err(); err != nil {
+		log.Printf("WARN: Redis删除失败 user:%d product:%d - %v",
+			input.UserID, input.ProductID, err)
 	}
 
 	return nil
@@ -154,7 +207,6 @@ type UpdateCartItemQuantityInput struct {
 
 // UpdateCartItemQuantity 更新购物车项数量
 func (s *CartService) UpdateCartItemQuantity(input *UpdateCartItemQuantityInput) error {
-	// 验证输入
 	if input.UserID == 0 || input.ProductID == 0 {
 		return errors.New("无效的用户或商品ID")
 	}
@@ -162,21 +214,29 @@ func (s *CartService) UpdateCartItemQuantity(input *UpdateCartItemQuantityInput)
 		return errors.New("数量必须大于0")
 	}
 
-	// 查找购物车项
-	var cartItem db.CartItem
-	if err := s.DB.Where("user_id = ? AND product_id = ? AND status = ?",
-		input.UserID, input.ProductID, "in_cart").
-		First(&cartItem).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("购物车中未找到该商品")
-		}
-		return fmt.Errorf("查询购物车失败: %w", err)
+	// 先更新数据库
+	result := s.DB.Model(&db.CartItem{}).
+		Where("user_id = ? AND product_id = ? AND status = ?",
+			input.UserID, input.ProductID, "in_cart").
+		Update("quantity", input.Quantity)
+
+	if result.Error != nil {
+		return fmt.Errorf("更新数量失败: %w", result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("购物车中未找到该商品")
 	}
 
-	// 更新数量
-	cartItem.Quantity = input.Quantity
-	if err := s.DB.Save(&cartItem).Error; err != nil {
-		return fmt.Errorf("更新数量失败: %w", err)
+	// 再更新Redis
+	key := fmt.Sprintf("cart:%d", input.UserID)
+	if err := db.RDB.HSet(
+		context.Background(),
+		key,
+		strconv.Itoa(int(input.ProductID)),
+		input.Quantity,
+	).Err(); err != nil {
+		log.Printf("WARN: Redis更新失败 user:%d product:%d - %v",
+			input.UserID, input.ProductID, err)
 	}
 
 	return nil

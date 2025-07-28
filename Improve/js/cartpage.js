@@ -433,6 +433,9 @@ document.addEventListener('DOMContentLoaded', function () {
     bindCheckboxEvents(); // 绑定勾选框事件
 });
 
+
+// TODO:
+// 补充地址页面的渲染，完善按钮“设置默认”功能
 function loadAddressList() {
     const user_id = getUserId();
 
@@ -519,7 +522,7 @@ function loadAddressList() {
                         const defaultTag = document.createElement('span');
                         defaultTag.classList.add('default-address-tag');
                         defaultTag.textContent = '默认地址';
-                        addressDiv.querySelector('.address-info').appendChild(defaultTag);
+                        addressDiv.querySelector('.address-actions').prepend(defaultTag);
                     }
 
                     // 将生成的地址项添加到地址容器中

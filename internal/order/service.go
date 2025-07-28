@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"szu_market/internal/db"
 
@@ -39,15 +40,25 @@ type CreateOrderInput struct {
 	ProductIDs        []uint  `json:"product_ids"`        // 一个产品ID的切片
 	ProductQuantities []uint  `json:"product_quantities"` // 对应的数量的切片
 }
-
-// CreateOrderResponse 创建订单响应
-type CreateOrderResponse struct {
-	OrderID    uint    `json:"orderId"`
-	TotalPrice float64 `json:"totalPrice"`
-	AddressID  uint    `json:"address_id"`
+type OrderProductResponse struct {
+	ProductID   uint    `json:"product_id"`
+	ProductName string  `json:"product_name"`
+	Price       float32 `json:"product_price"`
+	ImageURL    string  `json:"image_url"`
+	Quantity    uint    `json:"quantity"`
 }
 
-type CreateAddressInput struct {
+// OrderResponse 创建订单响应
+type OrderResponse struct {
+	OrderID    uint                   `json:"orderId"`
+	Create_At  time.Time              `json:"create_at"`
+	TotalPrice float64                `json:"totalPrice"`
+	AddressID  uint                   `json:"address_id"`
+	Products   []OrderProductResponse `json:"products"`
+	Status     string                 `json:"status"`
+}
+
+type AddressInput struct {
 	UserID    uint   `json:"user_id"`
 	Recipient string `json:"recipient"`
 	Phone     string `json:"phone"`
@@ -61,7 +72,7 @@ type CreateAddressInput struct {
 }
 
 // CreateOrder 创建新订单
-func (s *OrderService) CreateOrder(input *CreateOrderInput) (*CreateOrderResponse, error) {
+func (s *OrderService) CreateOrder(input *CreateOrderInput) (*OrderResponse, error) {
 	// 验证输入
 	if input.UserID == 0 {
 		return nil, errors.New("用户未登录")
@@ -107,7 +118,7 @@ func (s *OrderService) CreateOrder(input *CreateOrderInput) (*CreateOrderRespons
 	}
 	go s.sendAsyncMessages(newOrder.OrderID, input.ProductIDs, input.ProductQuantities)
 	// 返回创建的订单响应
-	return &CreateOrderResponse{
+	return &OrderResponse{
 		OrderID:    newOrder.OrderID,
 		TotalPrice: newOrder.TotalPrice,
 		AddressID:  newOrder.AddressID,
@@ -195,45 +206,16 @@ func (s *OrderService) CancelOrder(orderID uint) error {
 		return fmt.Errorf("查询订单失败: %w", err)
 	}
 
-	// 删除订单
-	if err := s.DB.Delete(&order).Error; err != nil {
-		return fmt.Errorf("取消订单失败: %w", err)
+	order.Status = "已取消"
+	if err := s.DB.Save(&order).Error; err != nil {
+		return fmt.Errorf("取消失败: %w", err)
 	}
 
 	return nil
 }
 
-// PayOrderInput 支付订单输入
-// type PayOrderInput struct {
-// 	OrderID uint `json:"order_id"`
-// }
-
-// PayOrder 支付订单
-// func (s *OrderService) PayOrder(orderID uint) error {
-// 	// 查找订单
-// 	var order db.Order
-// 	if err := s.DB.First(&order, orderID).Error; err != nil {
-// 		if errors.Is(err, gorm.ErrRecordNotFound) {
-// 			return errors.New("订单不存在")
-// 		}
-// 		return fmt.Errorf("查询订单失败: %w", err)
-// 	}
-
-// 	// TODO: 实际支付逻辑（调用支付接口等）
-
-// 	// 更新订单状态为已付款，状态改为待发货
-// 	order.PaymentStatus = "已付款" // 设置为已付款
-// 	order.Status = "等待发货"       // 设置为待发货
-
-// 	// 保存更新后的订单
-// 	if err := s.DB.Save(&order).Error; err != nil {
-// 		return fmt.Errorf("更新订单状态失败: %w", err)
-// 	}
-
-// 	return nil
-// }
-
-func (s *AddressService) CreateAddress(input *CreateAddressInput) (*db.Address, error) {
+// 创建地址
+func (s *AddressService) CreateAddress(input *AddressInput) (*db.Address, error) {
 	fmt.Println(input)
 	if input.UserID == 0 {
 		fmt.Println("input.UserID == 0")
@@ -264,6 +246,7 @@ func (s *AddressService) CreateAddress(input *CreateAddressInput) (*db.Address, 
 	return &newAddress, nil
 }
 
+// 获取地址
 func (s *AddressService) GetAddressItem(userid uint) ([]db.Address, error) {
 	var res []db.Address
 	err := s.DB.Table("addresses").
@@ -281,6 +264,7 @@ type RemoveAddressItemInput struct {
 	AddressID uint `json:"address_id"`
 }
 
+// 删除地址
 func (s *AddressService) RemoveAddressItem(input *RemoveAddressItemInput) error {
 	// 设置 GORM 会话并开启 Debug 日志
 	sessionDB := s.DB.Session(&gorm.Session{
@@ -315,4 +299,62 @@ func (s *AddressService) RemoveAddressItem(input *RemoveAddressItemInput) error 
 
 	fmt.Println("地址删除成功")
 	return nil
+}
+
+// 加载订单
+func (s *OrderService) GetOrders(user_id uint) ([]OrderResponse, error) {
+	type rawResult struct {
+		OrderID     uint
+		Price       float32
+		CreatedAt   time.Time
+		Status      string
+		TotalPrice  float64
+		ProductID   uint
+		ProductName string
+		ImageURL    string
+		Quantity    uint
+		AddressId   uint
+	}
+
+	var raws []rawResult
+
+	if err := s.DB.Table("orders AS o").
+		Select("o.order_id,o.created_at,o.status,o.total_price,o.status,op.product_id,op.num as quantity,sp.product_name,sp.image_url,sp.price,o.address_id").
+		Joins("JOIN order_products op ON op.order_id = o.order_id").
+		Joins("JOIN specialproduct sp ON sp.product_id = op.product_id").
+		Where("o.user_id = ?", user_id).
+		Order("o.created_at DESC").
+		Scan(&raws).Error; err != nil {
+		fmt.Println("查询失败")
+		return nil, fmt.Errorf("查询失败:%w", err)
+	}
+
+	orderMap := make(map[uint]*OrderResponse) //存储指针的映射
+	// 修改会直接反映到原始对象上，无需重新赋值或 put 回去。
+	for _, row := range raws {
+		order, exist := orderMap[row.OrderID]
+		if !exist {
+			order = &OrderResponse{
+				OrderID:    row.OrderID,
+				TotalPrice: row.TotalPrice,
+				AddressID:  row.AddressId,
+				Create_At:  row.CreatedAt,
+				Status:     row.Status,
+				Products:   []OrderProductResponse{},
+			}
+			orderMap[row.OrderID] = order
+		}
+		order.Products = append(order.Products, OrderProductResponse{
+			ProductID:   row.ProductID,
+			ProductName: row.ProductName,
+			Price:       row.Price,
+			ImageURL:    row.ImageURL,
+			Quantity:    row.Quantity,
+		})
+	}
+	var res []OrderResponse
+	for _, order := range orderMap {
+		res = append(res, *order)
+	}
+	return res, nil
 }

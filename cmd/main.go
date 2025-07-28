@@ -22,6 +22,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("数据库初始化失败: %v", err)
 	}
+	// 初始化 Redis 连接
+	_, err = db.InitRedis()
+	if err != nil {
+		log.Fatal("Redis 初始化失败")
+		return
+	}
 	// 启动Kafka消费者（并发启动多个消费者）
 	consumerService := order.NewConsumerService(db.DB)
 

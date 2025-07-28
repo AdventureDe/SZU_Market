@@ -29,7 +29,7 @@ func NewAddressHandler(service *AddressService) *AddressHandler {
 
 // 处理新建地址
 func (h *AddressHandler) CreateAddress(c *gin.Context) {
-	var input CreateAddressInput
+	var input AddressInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "无效参数"})
@@ -169,6 +169,34 @@ func (h *OrderHandler) PayOrder(c *gin.Context) {
 	})
 }
 
+func (h *OrderHandler) GetOrders(c *gin.Context) {
+	userId := c.Query("user_id")
+	user_id, err := strconv.ParseUint(userId, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "用户id无效"})
+		fmt.Println("订单ID无效")
+		return
+	}
+	if user_id == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "message": "用户未登录"})
+		fmt.Println("用户未登录")
+		return
+	}
+	// GET需要调用对应的service服务
+	orders, err := h.Service.GetOrders(uint(user_id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "查询订单失败"})
+		return
+	}
+
+	// 返回订单数据
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "加载成功",
+		"data":    orders, // 把订单结果放在 data 字段中返回
+	})
+}
+
 // RegisterOrderRoutes 注册订单路由
 func RegisterOrderRoutes(r *gin.Engine, db *gorm.DB) {
 	// 创建服务和处理程序
@@ -182,5 +210,6 @@ func RegisterOrderRoutes(r *gin.Engine, db *gorm.DB) {
 	r.POST("/orders/:order_id/pay", orderHandler.PayOrder)
 	r.POST("/addresses", addressHandler.CreateAddress)
 	r.GET("/addresses", addressHandler.GetAddressItem)
+	r.GET("/orders", orderHandler.GetOrders)
 	r.DELETE("/addresses/:addressId", addressHandler.RemoveAddressItem)
 }

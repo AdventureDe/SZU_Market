@@ -50,7 +50,7 @@ type Order struct {
 	UserID        uint           `gorm:"not null" json:"user_id"`
 	TotalPrice    float64        `gorm:"type:decimal(10,2);not null" json:"total_price"`
 	Status        string         `gorm:"type:enum('待付款','等待发货','已发货','已收货');default:'待付款'" json:"status"`
-	PaymentStatus string         `gorm:"type:enum('未付款','已付款');default:'未付款'" json:"payment_status"`
+	PaymentStatus string         `gorm:"type:enum('未付款','已付款','已取消');default:'未付款'" json:"payment_status"`
 	AddressID     uint           `gorm:"not null" json:"address_id"`
 	OrderProducts []OrderProduct `gorm:"foreignKey:OrderID"`
 }

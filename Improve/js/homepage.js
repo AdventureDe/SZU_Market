@@ -88,7 +88,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const productList = document.querySelector('.product-list');
                 productList.innerHTML = '';
-
+                // TODO
+                // 将商品id与user、favorite等表合并，完成收藏icon的填充优化
                 products.forEach(product => {
                     const productItem = document.createElement('div');
                     productItem.classList.add('product-item');
@@ -206,21 +207,21 @@ document.querySelector('.search-box').addEventListener('keyup', function (e) {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const userId = parseInt(sessionStorage.getItem("userId") || "0", 10);
+// document.addEventListener('DOMContentLoaded', function () {
+//     const userId = parseInt(sessionStorage.getItem("userId") || "0", 10);
 
-    if (!userId) {
-        return; // 如果用户没有登录，直接退出
-    }
+//     if (!userId) {
+//         return; // 如果用户没有登录，直接退出
+//     }
 
-    // 请求当前用户的收藏列表
-    fetch(`http://localhost:5000/favorites?user_id=${userId}`)
-        .then(response => response.json())
-        .then(favorites => {
-            // favorites是一个包含已收藏的product_id的数组
-            updateFavoriteIcons(favorites);
-        })
-        .catch(error => {
-            console.error('获取收藏列表失败:', error);
-        });
-});
+//     // 请求当前用户的收藏列表
+//     fetch(`http://localhost:5000/favorites?user_id=${userId}`)
+//         .then(response => response.json())
+//         .then(favorites => {
+//             // favorites是一个包含已收藏的product_id的数组
+//             updateFavoriteIcons(favorites);
+//         })
+//         .catch(error => {
+//             console.error('获取收藏列表失败:', error);
+//         });
+// });
