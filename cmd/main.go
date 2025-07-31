@@ -22,12 +22,16 @@ func main() {
 	if err != nil {
 		log.Fatalf("数据库初始化失败: %v", err)
 	}
+	defer db.CloseDB()
+
 	// 初始化 Redis 连接
 	_, err = db.InitRedis()
 	if err != nil {
 		log.Fatal("Redis 初始化失败")
 		return
 	}
+	defer db.CloseRedis()
+
 	// 启动Kafka消费者（并发启动多个消费者）
 	consumerService := order.NewConsumerService(db.DB)
 
@@ -38,7 +42,7 @@ func main() {
 	// 配置CORS（更安全的配置）
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
 	r.Use(cors.New(config))
 

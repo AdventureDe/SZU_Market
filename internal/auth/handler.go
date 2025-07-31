@@ -44,7 +44,7 @@ func loginHandler(c *gin.Context, db *gorm.DB) {
 
 	// 绑定JSON数据
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "参数格式错误"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "参数格式错误"})
 		return
 	}
 
@@ -52,7 +52,7 @@ func loginHandler(c *gin.Context, db *gorm.DB) {
 	service := NewService(db)
 	user, err := service.LoginUser(input.Username, input.Password, input.Role)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 

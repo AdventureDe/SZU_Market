@@ -52,6 +52,31 @@ func InitRedis() (*redis.Client, error) {
 	return RDB, nil
 }
 
+// 关闭数据库连接
+func CloseDB() {
+	if DB != nil {
+		sqlDB, err := DB.DB() // 获取底层的 sql.DB
+		if err != nil {
+			log.Println("获取 sql.DB 实例失败：", err)
+			return
+		}
+		err = sqlDB.Close() // 关闭连接池
+		if err != nil {
+			log.Println("关闭数据库连接失败：", err)
+		}
+	}
+}
+
+// 关闭 Redis 客户端连接
+func CloseRedis() {
+	if RDB != nil {
+		err := RDB.Close() // 关闭 Redis 连接
+		if err != nil {
+			log.Println("关闭 Redis 连接失败：", err)
+		}
+	}
+}
+
 // autoMigrate 自动迁移所有模型
 func autoMigrate() {
 	err := DB.AutoMigrate(

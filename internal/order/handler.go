@@ -31,24 +31,19 @@ func NewAddressHandler(service *AddressService) *AddressHandler {
 func (h *AddressHandler) CreateAddress(c *gin.Context) {
 	var input AddressInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "无效参数"})
 		return
 	}
 	response, err := h.Service.CreateAddress(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"success":   true,
-		"recipient": response.Recipient,
-		"phone":     response.Phone,
-		"country":   response.Country,
-		"province":  response.Province,
-		"city":      response.City,
-		"district":  response.District,
-		"street":    response.Street,
+		"success": true,
+		"message": "地址创建成功",
+		"address": response,
 	})
 }
 
@@ -119,10 +114,9 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success":    true,
-		"orderId":    response.OrderID,
-		"totalPrice": response.TotalPrice,
-		"addressId":  response.AddressID,
+		"success":  true,
+		"message":  "订单创建成功",
+		"response": response,
 	})
 }
 
@@ -193,7 +187,7 @@ func (h *OrderHandler) GetOrders(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "加载成功",
-		"data":    orders, // 把订单结果放在 data 字段中返回
+		"data":    orders,
 	})
 }
 

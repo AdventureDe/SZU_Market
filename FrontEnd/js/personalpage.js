@@ -344,7 +344,8 @@ function setupModalListeners() {
 function openModal(moduleName) {
     console.log("openModal triggered with:", moduleName);
     if (!modalContents[moduleName]) return;
-    document.body.style.overflow = 'hidden';
+    //TODO:优化弹窗打开后，背景不能移动
+    //document.body.style.overflow = 'hidden';
     // 设置标题
     modalTitle.textContent = modalContents[moduleName].title;
 
