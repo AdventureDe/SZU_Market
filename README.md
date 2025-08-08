@@ -1,6 +1,6 @@
 # SZU_Market - Campus Online Marketplace Platform
 
-![Campus Marketplace](./github/images/szu-market-screenshot.png)
+![Campus Marketplace](https://raw.githubusercontent.com/AdventureDe/SZU_Market/refs/heads/main/.github/images/szu-market-screenshot.png)
 
 `SZU_Market` is an online marketplace platform designed specifically for campus users. It provides a complete e-commerce solution with product browsing, ordering, shopping cart functionality, and backend management. The system features multi-role permission control, supporting differentiated permissions for regular users and administrators.
 
