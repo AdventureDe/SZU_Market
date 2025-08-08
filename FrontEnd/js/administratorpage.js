@@ -4,7 +4,7 @@ const user_id = sessionStorage.getItem('userId') || 'admin123';
 // 下架商品
 function removeProduct(productId) {
     // 发送请求到后端，通知后端下架该商品
-    fetch(`http://localhost:5000/admin_product/${productId}`, {
+    fetch(`http://localhost:8080/admin_product/${productId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ function removeProduct(productId) {
 }
 
 // 加载商品并添加事件监听器
-fetch('http://localhost:5000/api/admin_product')
+fetch('http://localhost:8080/api/admin_product')
     .then(response => response.json())
     .then(products => {
         const productList = document.querySelector('.product-list');

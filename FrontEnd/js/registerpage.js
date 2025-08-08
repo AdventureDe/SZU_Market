@@ -92,12 +92,12 @@ document.getElementById('registerBtn').addEventListener('click', async function 
     const data = {
         username: username,
         password: password,
-        role: 1, // 1代表管理员，2代表用户
+        role: 2, // 1代表管理员，2代表用户
         phone: phone
     };
 
     try {
-        const response = await fetch('http://localhost:5000/register', {
+        const response = await fetch('http://localhost:8080/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -111,7 +111,7 @@ document.getElementById('registerBtn').addEventListener('click', async function 
         if (result.message) {
             alert(result.message);
             if (result.message == "注册成功")
-                window.location.assign('./loginpage.html');
+                window.location.assign('./index.html');
         } else if (result.error) {
             alert(result.error);
         }
@@ -127,7 +127,7 @@ document.getElementById('registerBtn').addEventListener('click', async function 
 
 // 返回登录按钮
 document.getElementById('backToLoginBtn').addEventListener('click', function () {
-    window.location.assign('./loginpage.html');
+    window.location.assign('./index.html');
 });
 
 // 初始化星星

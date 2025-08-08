@@ -30,10 +30,6 @@ type SpecialProduct struct {
 	Sales              uint      `gorm:"type:not null" json:"sales"`
 }
 
-func (SpecialProduct) TableName() string {
-	return "specialproduct"
-}
-
 // 购物车项目模型
 type CartItem struct {
 	CartID    uint      `gorm:"primaryKey;autoIncrement" json:"cart_id"`

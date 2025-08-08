@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('search-title').innerHTML = `搜索结果: <span>${escapeHtml(query)}</span>`;
 
-    fetch(`http://localhost:5000/searchs?search=${encodeURIComponent(query)}`)
+    fetch(`http://localhost:8080/searchs?search=${encodeURIComponent(query)}`)
         .then(response => response.json())
         .then(products => {
             const container = document.getElementById('search-results');
@@ -101,7 +101,7 @@ function addToCart(product) {
     };
     console.log(cartData);
     // 调用后端 API，使用 fetch 发送数据
-    fetch('http://localhost:5000/cart', {
+    fetch('http://localhost:8080/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

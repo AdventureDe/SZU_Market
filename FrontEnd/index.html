@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://www1.szu.edu.cn/szu.ico" type="image/x-icon" rel="shortcut icon">
-    <title>深大特色时令产品集市平台 - 注册</title>
+    <title>深大特色时令产品集市平台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -79,13 +79,50 @@
             animation-duration: var(--duration);
         }
 
-        /* 注册容器 */
-        .register-container {
+        /* 角色选择器 - 优化 */
+        .role-selector {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(10, 25, 47, 0.8);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .role-selector label {
+            color: #64ffda;
+            margin-right: 10px;
+            font-weight: 500;
+        }
+
+        .role-selector select {
+            background: transparent;
+            border: none;
+            color: #ccd6f6;
+            font-size: 16px;
+            padding: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .role-selector select option {
             background: rgba(10, 25, 47, 0.9);
+            color: #ccd6f6;
+        }
+
+        /* 登录容器 - 全面优化 */
+        .login-container {
+            background: rgba(10, 25, 47, 0.85);
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            width: 420px;
+            width: 380px;
             max-width: 90%;
             text-align: center;
             z-index: 10;
@@ -94,12 +131,11 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .register-container:hover {
-            transform: translateY(-5px);
+        .login-container:hover {
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
         }
 
-        .register-container h2 {
+        .login-container h2 {
             margin-bottom: 30px;
             color: #64ffda;
             font-size: 32px;
@@ -109,7 +145,7 @@
             padding-bottom: 15px;
         }
 
-        .register-container h2:after {
+        .login-container h2:after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -125,15 +161,10 @@
             position: relative;
         }
 
-        .form-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
         .input-field {
             width: 100%;
             padding: 14px 20px 14px 45px;
+            margin: 8px 0;
             border: 1px solid rgba(100, 255, 218, 0.3);
             border-radius: 8px;
             background: rgba(17, 34, 64, 0.5);
@@ -165,7 +196,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 25px;
+            margin-top: 20px;
         }
 
         .btn {
@@ -182,97 +213,36 @@
             gap: 10px;
         }
 
-        .btn-primary {
+        .btn-login {
             background: linear-gradient(135deg, #64ffda, #00c9a7);
             color: #0a192f;
             box-shadow: 0 4px 15px rgba(100, 255, 218, 0.3);
         }
 
-        .btn-primary:hover {
+        .btn-login:hover {
             background: linear-gradient(135deg, #00c9a7, #64ffda);
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(100, 255, 218, 0.4);
         }
 
-        .btn-secondary {
+        .btn-register {
             background: transparent;
             color: #64ffda;
             border: 1px solid #64ffda;
         }
 
-        .btn-secondary:hover {
+        .btn-register:hover {
             background: rgba(100, 255, 218, 0.1);
             transform: translateY(-3px);
         }
 
-        .country-select {
-            flex: 1;
-            padding: 10px 10px;
-            border: 1px solid rgba(100, 255, 218, 0.3);
-            border-radius: 8px;
-            background: rgba(17, 34, 64, 0.5);
-            color: #ccd6f6;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            outline: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2364ffda'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 5px center;
-            background-size: 16px;
-        }
-
-        .phone-input {
-            flex: 2;
-            padding: 14px 20px;
-            border: 1px solid rgba(100, 255, 218, 0.3);
-            border-radius: 8px;
-            background: rgba(17, 34, 64, 0.5);
-            color: #ccd6f6;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .verification-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .verification-input {
-            flex: 2;
-            padding: 14px 20px;
-            border: 1px solid rgba(100, 255, 218, 0.3);
-            border-radius: 8px;
-            background: rgba(17, 34, 64, 0.5);
-            color: #ccd6f6;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .get-verification-btn {
-            flex: 1;
-            padding: 14px;
-            background: rgba(100, 255, 218, 0.1);
-            color: #64ffda;
-            border: 1px solid #64ffda;
-            border-radius: 8px;
+        .error {
+            color: #ff6b6b;
             font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .get-verification-btn:hover {
-            background: rgba(100, 255, 218, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .get-verification-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+            font-weight: 500;
         }
 
         .additional-info {
@@ -303,17 +273,14 @@
 
         /* 响应式设计 */
         @media (max-width: 480px) {
-            .register-container {
+            .login-container {
                 padding: 30px 20px;
             }
 
-            .form-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .verification-group {
-                flex-direction: column;
+            .role-selector {
+                top: 15px;
+                right: 15px;
+                padding: 8px 12px;
             }
         }
     </style>
@@ -324,28 +291,18 @@
     <!-- 动态星空背景 -->
     <div class="stars" id="stars-container"></div>
 
-    <div class="register-container">
-        <form id="RegisterForm">
-            <h2>深大集市注册</h2>
+    <!-- 角色切换下拉菜单 -->
+    <div class="role-selector">
+        <label for="role">角色:</label>
+        <select id="role">
+            <option value="user">用户</option>
+            <option value="admin">管理员</option>
+        </select>
+    </div>
 
-            <div class="form-group">
-                <div class="form-row">
-                    <select class="country-select" id="countryCode" name="countryCode" required>
-                        <option value="+1">+1 美国</option>
-                        <option value="+44">+44 英国</option>
-                        <option value="+86" selected>+86 中国</option>
-                        <option value="+91">+91 印度</option>
-                        <option value="+81">+81 日本</option>
-                    </select>
-                    <input type="tel" class="phone-input" id="phone" name="phone" placeholder="手机号码" required>
-                </div>
-
-                <div class="verification-group">
-                    <input type="text" class="verification-input" id="verificationCode" placeholder="验证码" required>
-                    <button type="button" class="get-verification-btn" id="getID">获取验证码</button>
-                </div>
-            </div>
-
+    <div class="login-container">
+        <h2>深大集市</h2>
+        <form id="loginForm">
             <div class="form-group">
                 <div class="icon-wrapper">
                     <i class="fas fa-user"></i>
@@ -357,15 +314,17 @@
                 <div class="icon-wrapper">
                     <i class="fas fa-lock"></i>
                 </div>
-                <input type="password" class="input-field" id="password" placeholder="密码 (至少8位)" required>
+                <input type="password" class="input-field" id="password" placeholder="密码" required>
             </div>
 
+            <div class="error" id="error-message">用户名或密码错误</div>
+
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="registerBtn">
-                    <i class="fas fa-user-plus"></i> 立即注册
+                <button type="button" class="btn btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> 登录
                 </button>
-                <button type="button" class="btn btn-secondary" id="backToLoginBtn">
-                    <i class="fas fa-arrow-left"></i> 返回登录
+                <button type="button" class="btn btn-register" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> 注册
                 </button>
             </div>
         </form>
@@ -377,7 +336,7 @@
 
     <div class="szu-logo">深圳大学</div>
 
-    <script src="./js/registerpage.js"></script>
+    <script src="./js/loginpage.js"></script>
 </body>
 
 </html>

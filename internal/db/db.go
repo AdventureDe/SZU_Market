@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
@@ -18,7 +19,19 @@ var RDB *redis.Client
 
 // InitDB 初始化数据库连接并返回数据库实例go
 func InitDB() (*gorm.DB, error) {
-	dsn := "root:@tcp(127.0.0.1:3306)/exp4?charset=utf8mb4&parseTime=True&loc=Local"
+	// 获取环境变量并打印调试信息
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
+	log.Printf("连接信息：User=%s, Host=%s, Port=%s, DBName=%s", dbUser, dbHost, dbPort, dbName)
+
+	// 格式化连接字符串
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbUser, dbPassword, dbHost, dbPort, dbName)
+
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -36,9 +49,9 @@ func InitDB() (*gorm.DB, error) {
 func InitRedis() (*redis.Client, error) {
 	// 配置 Redis 连接
 	RDB = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Redis 服务器地址
-		Password: "12345678",       // Redis 密码
-		DB:       0,                // 使用默认的 DB（0）
+		Addr:     "redis:6379", // Redis 服务器地址
+		Password: "12345678",   // Redis 密码
+		DB:       0,            // 使用默认的 DB（0）
 	})
 
 	// 测试连接是否成功

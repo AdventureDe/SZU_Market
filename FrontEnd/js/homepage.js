@@ -18,7 +18,7 @@ function addToCart(product) {
     };
     console.log(cartData);
     // 调用后端 API，使用 fetch 发送数据
-    fetch('http://localhost:5000/cart', {
+    fetch('http://localhost:8080/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,7 +66,7 @@ function showNotification(message) {
 // 加载商品并添加事件监听器
 document.addEventListener('DOMContentLoaded', function () {
     console.log('页面加载完成，开始请求商品数据...');
-    fetch('http://localhost:5000/shouye')
+    fetch('http://localhost:8080/shouye')
         .then(response => {
             console.log('响应状态:', response.status);
             console.log('响应内容类型:', response.headers.get('Content-Type'));
@@ -155,7 +155,7 @@ function toggleFavorite(icon) {
     const isFavorited = icon.classList.contains('filled');
 
     // 发送请求到后端
-    fetch(`http://localhost:5000/favorite`, {
+    fetch(`http://localhost:8080/favorite`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -215,7 +215,7 @@ document.querySelector('.search-box').addEventListener('keyup', function (e) {
 //     }
 
 //     // 请求当前用户的收藏列表
-//     fetch(`http://localhost:5000/favorites?user_id=${userId}`)
+//     fetch(`http://localhost:8080/favorites?user_id=${userId}`)
 //         .then(response => response.json())
 //         .then(favorites => {
 //             // favorites是一个包含已收藏的product_id的数组

@@ -13,7 +13,7 @@ function loadCartItems() {
     }
 
     // 发送请求获取购物车商品
-    fetch(`http://localhost:5000/cart?user_id=${user_id}`, {
+    fetch(`http://localhost:8080/cart?user_id=${user_id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ function deleteItem(event) {
     }
 
     // 删除购物车商品
-    fetch(`http://localhost:5000/cart/${productId}?user_id=${userId}`, {
+    fetch(`http://localhost:8080/cart/${productId}?user_id=${userId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ function updateQuantity(event) {
 
     console.log('Request Data:', requestData);
 
-    fetch(`http://localhost:5000/cart/${productId}/quantity?user_id=${userId}`, {
+    fetch(`http://localhost:8080/cart/${productId}/quantity?user_id=${userId}`, {
             method: 'PUT',
             body: JSON.stringify(requestData),
             headers: {
@@ -283,7 +283,7 @@ function createOrder() {
     console.log(productIdItems);
     console.log(productQuatityItems);
     // 发送请求生成订单
-    fetch('http://localhost:5000/orders', {
+    fetch('http://localhost:8080/orders', {
             method: 'POST',
             body: JSON.stringify({
                 user_id: parseInt(userId),
@@ -299,9 +299,10 @@ function createOrder() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                console.log("create order ok");
-                currentOrderId = data.orderId;
-                console.log(currentOrderId);
+                //console.log("create order ok");
+                //console.log(data.response);
+                currentOrderId = data.response.orderId;
+                //console.log(currentOrderId);
             } else {
                 alert('订单生成失败: ' + data.message);
             }
@@ -370,7 +371,7 @@ cancelOrderBtn.addEventListener('click', function () {
         return;
     }
 
-    fetch(`http://localhost:5000/orders/${orderId}`, {
+    fetch(`http://localhost:8080/orders/${orderId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -399,7 +400,7 @@ payOrderBtn.addEventListener('click', function () {
         return;
     }
 
-    fetch(`http://localhost:5000/orders/${orderId}/pay`, {
+    fetch(`http://localhost:8080/orders/${orderId}/pay`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -445,7 +446,7 @@ function loadAddressList() {
     }
     console.log(user_id);
     // 发送请求获取用户地址
-    fetch(`http://localhost:5000/addresses?user_id=${user_id}`, {
+    fetch(`http://localhost:8080/addresses?user_id=${user_id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -567,7 +568,7 @@ function deleteAddress(event) {
     const addressId = addressItemElement.dataset.addressId;
     console.log(addressId);
     const user_id = getUserId();
-    fetch(`http://localhost:5000/addresses/${addressId}?user_id=${user_id}`, {
+    fetch(`http://localhost:8080/addresses/${addressId}?user_id=${user_id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -800,7 +801,7 @@ addressForm.addEventListener('submit', function (e) {
     };
 
     // 发送请求到后端
-    fetch('http://localhost:5000/addresses', {
+    fetch('http://localhost:8080/addresses', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // 设置请求头为JSON

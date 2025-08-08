@@ -179,7 +179,7 @@ func (s *OrderService) sendNoticeMessage(orderID uint) error {
 // 发送队列 使用kafka
 func sendToQueue(topic string, payload interface{}) error {
 	writer := kafka.NewWriter(kafka.WriterConfig{
-		Brokers:  []string{"localhost:9092"},
+		Brokers:  []string{"kafka:9092"},
 		Topic:    topic,
 		Balancer: &kafka.LeastBytes{},
 	})

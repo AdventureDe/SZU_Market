@@ -33,7 +33,7 @@ func (c *ConsumerService) StartConsumers() {
 // consumePaymentMessages 消费支付消息
 func (c *ConsumerService) consumePaymentMessages() {
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"localhost:9092"},
+		Brokers:  []string{"kafka:9092"},
 		Topic:    "paymentQueue",
 		GroupID:  "payment-group",
 		MinBytes: 10e3, // 10KB
@@ -67,7 +67,7 @@ func (c *ConsumerService) consumePaymentMessages() {
 // consumeSalesMessages 消费销量消息
 func (c *ConsumerService) consumeSalesMessages() {
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"localhost:9092"},
+		Brokers:  []string{"kafka:9092"},
 		Topic:    "salesQueue",
 		GroupID:  "sales-group",
 		MinBytes: 10e3,
@@ -102,7 +102,7 @@ func (c *ConsumerService) consumeSalesMessages() {
 // consumeNoticeMessages 消费通知消息
 func (c *ConsumerService) consumeNoticeMessages() {
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"localhost:9092"},
+		Brokers:  []string{"kafka:9092"},
 		Topic:    "noticeQueue",
 		GroupID:  "notice-group",
 		MinBytes: 10e3,

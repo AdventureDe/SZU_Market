@@ -3,10 +3,6 @@ package main
 import (
 	"log"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	"szu_market/internal/auth"
 	"szu_market/internal/cart"
 	"szu_market/internal/db"
@@ -14,6 +10,10 @@ import (
 	"szu_market/internal/info"
 	"szu_market/internal/order"
 	"szu_market/internal/product"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -40,18 +40,20 @@ func main() {
 
 	r := gin.Default()
 	// 配置CORS（更安全的配置）
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
-	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
-	r.Use(cors.New(config))
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5000"},                   // 允许的前端地址
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},            // 允许的 HTTP 方法
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // 允许的请求头
+		ExposeHeaders:    []string{"X-My-Custom-Header"},                      // 允许浏览器访问的响应头
+		AllowCredentials: true,                                                // 是否允许带上 Cookies 等凭证
+	}))
 
 	r.Static("/improve", "./Improve")
 	r.Static("/goods_pic", "./Improve/goods_pic")
 	// 用户认证路由
 	registerAllRoutes(r, db.DB)
 
-	r.Run(":5000") // 启动服务
+	r.Run(":8080") // 启动服务
 }
 
 func registerAllRoutes(r *gin.Engine, db *gorm.DB) {

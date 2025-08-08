@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function updateUserInfo() {
     // 如果有 user_id，发送请求到后端获取用户信息
     if (user_id) {
-        fetch(`http://localhost:5000/users/${user_id}`)
+        fetch(`http://localhost:8080/users/${user_id}`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -83,7 +83,7 @@ function addProduct() {
     };
 
     // 发送请求到后端
-    fetch('http://localhost:5000/addProduct', {
+    fetch('http://localhost:8080/addProduct', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ function loadProducts() {
         return;
     }
 
-    fetch(`http://localhost:5000/ownProducts?user_id=${userId}`) // 通过用户 ID 获取该用户的商品
+    fetch(`http://localhost:8080/ownProducts?user_id=${userId}`) // 通过用户 ID 获取该用户的商品
         .then(response => {
             console.log('Response:', response); // 打印响应对象，查看状态码和返回内容
             return response.json(); // 尝试解析为 JSON
@@ -170,7 +170,7 @@ function removeProduct(productId) {
     }
 
     // 发送 DELETE 请求到后端
-    fetch(`http://localhost:5000/removeProduct/${productId}/remove`, {
+    fetch(`http://localhost:8080/removeProduct/${productId}`, {
             method: 'DELETE', // 使用 DELETE 请求方法
             headers: {
                 'Content-Type': 'application/json',
@@ -375,7 +375,7 @@ function closeModalHandler() {
 // 加载收藏数据
 function loadFavorites() {
     const apiStatus = document.getElementById('apiStatus');
-    const url = `http://localhost:5000/favorites?user_id=${user_id}`;
+    const url = `http://localhost:8080/favorites?user_id=${user_id}`;
     apiStatus.classList.remove('error');
     fetch(url)
         .then(response => {
@@ -476,7 +476,7 @@ function removeFromFavorite(product_id, itemElement) {
         return;
     }
     itemElement.remove(); // 删除自己
-    fetch('http://localhost:5000/favorite', {
+    fetch('http://localhost:8080/favorite', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -532,7 +532,7 @@ function addToCart(product_id) {
     };
     console.log(cartData);
     // 调用后端 API，使用 fetch 发送数据
-    fetch('http://localhost:5000/cart', {
+    fetch('http://localhost:8080/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -580,7 +580,7 @@ function showNotification(message) {
 //-------------------  订单模块  -------------------
 function loadOrders() {
     const apiStatus = document.getElementById('apiStatus');
-    const url = `http://localhost:5000/orders?user_id=${user_id}`;
+    const url = `http://localhost:8080/orders?user_id=${user_id}`;
     apiStatus.classList.remove('error');
     fetch(url)
         .then(response => {
