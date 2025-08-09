@@ -23,23 +23,29 @@ func NewConsumerService(db *gorm.DB) *ConsumerService {
 	return &ConsumerService{DB: db}
 }
 
-// StartConsumers 启动所有消费者
+const maxWorker = 50    // 最大并发处理数，按需调
+const consumerCount = 6 // 启动的消费者数量
+
 func (c *ConsumerService) StartConsumers() {
-	go c.consumePaymentMessages()
-	go c.consumeSalesMessages()
-	go c.consumeNoticeMessages()
+	for i := 0; i < consumerCount; i++ {
+		go c.consumePaymentMessages(i)
+		go c.consumeSalesMessages(i)
+		go c.consumeNoticeMessages(i)
+	}
 }
 
-// consumePaymentMessages 消费支付消息
-func (c *ConsumerService) consumePaymentMessages() {
+// 消费支付消息（增加并发处理）
+func (c *ConsumerService) consumePaymentMessages(id int) {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{"kafka:9092"},
 		Topic:    "paymentQueue",
 		GroupID:  "payment-group",
-		MinBytes: 10e3, // 10KB
-		MaxBytes: 10e6, // 10MB
+		MinBytes: 10e3,
+		MaxBytes: 10e6,
 	})
 	defer reader.Close()
+
+	sem := make(chan struct{}, maxWorker)
 
 	for {
 		msg, err := reader.ReadMessage(context.Background())
@@ -48,24 +54,29 @@ func (c *ConsumerService) consumePaymentMessages() {
 			continue
 		}
 
-		var data struct {
-			OrderID uint `json:"order_id"`
-		}
-		if err := json.Unmarshal(msg.Value, &data); err != nil {
-			log.Printf("支付消息解析失败: %v", err)
-			continue
-		}
+		sem <- struct{}{} // 获取并发令牌
+		go func(m kafka.Message) {
+			defer func() { <-sem }() // 处理完释放令牌
 
-		if err := c.processPayment(data.OrderID); err != nil {
-			log.Printf("支付处理失败: 订单ID %d, 错误: %v", data.OrderID, err)
-		} else {
-			log.Printf("订单支付成功: %d", data.OrderID)
-		}
+			var data struct {
+				OrderID uint `json:"order_id"`
+			}
+			if err := json.Unmarshal(m.Value, &data); err != nil {
+				log.Printf("支付消息解析失败: %v", err)
+				return
+			}
+
+			if err := c.processPayment(data.OrderID); err != nil {
+				log.Printf("支付处理失败: 订单ID %d, 错误: %v", data.OrderID, err)
+			} else {
+				log.Printf("订单支付成功: %d", data.OrderID)
+			}
+		}(msg)
 	}
 }
 
-// consumeSalesMessages 消费销量消息
-func (c *ConsumerService) consumeSalesMessages() {
+// consumeSalesMessages 并发处理销量消息
+func (c *ConsumerService) consumeSalesMessages(id int) {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{"kafka:9092"},
 		Topic:    "salesQueue",
@@ -75,6 +86,8 @@ func (c *ConsumerService) consumeSalesMessages() {
 	})
 	defer reader.Close()
 
+	sem := make(chan struct{}, maxWorker)
+
 	for {
 		msg, err := reader.ReadMessage(context.Background())
 		if err != nil {
@@ -82,25 +95,30 @@ func (c *ConsumerService) consumeSalesMessages() {
 			continue
 		}
 
-		var data struct {
-			ProductID uint `json:"product_id"`
-			Quantity  uint `json:"quantity"`
-		}
-		if err := json.Unmarshal(msg.Value, &data); err != nil {
-			log.Printf("销量消息解析失败: %v", err)
-			continue
-		}
+		sem <- struct{}{}
+		go func(m kafka.Message) {
+			defer func() { <-sem }()
 
-		if err := c.increaseSales(data.ProductID, data.Quantity); err != nil {
-			log.Printf("销量更新失败: 产品ID %d, 错误: %v", data.ProductID, err)
-		} else {
-			log.Printf("销量更新成功: 产品ID %d, 数量 %d", data.ProductID, data.Quantity)
-		}
+			var data struct {
+				ProductID uint `json:"product_id"`
+				Quantity  uint `json:"quantity"`
+			}
+			if err := json.Unmarshal(m.Value, &data); err != nil {
+				log.Printf("销量消息解析失败: %v", err)
+				return
+			}
+
+			if err := c.increaseSales(data.ProductID, data.Quantity); err != nil {
+				log.Printf("销量更新失败: 产品ID %d, 错误: %v", data.ProductID, err)
+			} else {
+				log.Printf("销量更新成功: 产品ID %d, 数量 %d", data.ProductID, data.Quantity)
+			}
+		}(msg)
 	}
 }
 
-// consumeNoticeMessages 消费通知消息
-func (c *ConsumerService) consumeNoticeMessages() {
+// consumeNoticeMessages 并发处理通知消息
+func (c *ConsumerService) consumeNoticeMessages(id int) {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{"kafka:9092"},
 		Topic:    "noticeQueue",
@@ -110,6 +128,8 @@ func (c *ConsumerService) consumeNoticeMessages() {
 	})
 	defer reader.Close()
 
+	sem := make(chan struct{}, maxWorker)
+
 	for {
 		msg, err := reader.ReadMessage(context.Background())
 		if err != nil {
@@ -117,19 +137,24 @@ func (c *ConsumerService) consumeNoticeMessages() {
 			continue
 		}
 
-		var data struct {
-			OrderID uint `json:"order_id"`
-		}
-		if err := json.Unmarshal(msg.Value, &data); err != nil {
-			log.Printf("通知消息解析失败: %v", err)
-			continue
-		}
+		sem <- struct{}{}
+		go func(m kafka.Message) {
+			defer func() { <-sem }()
 
-		if err := c.sendNotification(data.OrderID); err != nil {
-			log.Printf("通知发送失败: 订单ID %d, 错误: %v", data.OrderID, err)
-		} else {
-			log.Printf("通知发送成功: 订单ID %d", data.OrderID)
-		}
+			var data struct {
+				OrderID uint `json:"order_id"`
+			}
+			if err := json.Unmarshal(m.Value, &data); err != nil {
+				log.Printf("通知消息解析失败: %v", err)
+				return
+			}
+
+			if err := c.sendNotification(data.OrderID); err != nil {
+				log.Printf("通知发送失败: 订单ID %d, 错误: %v", data.OrderID, err)
+			} else {
+				log.Printf("通知发送成功: 订单ID %d", data.OrderID)
+			}
+		}(msg)
 	}
 }
 

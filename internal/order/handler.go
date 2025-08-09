@@ -192,9 +192,9 @@ func (h *OrderHandler) GetOrders(c *gin.Context) {
 }
 
 // RegisterOrderRoutes 注册订单路由
-func RegisterOrderRoutes(r *gin.Engine, db *gorm.DB) {
+func RegisterOrderRoutes(r *gin.Engine, db *gorm.DB, p *KafkaProducer) {
 	// 创建服务和处理程序
-	orderService := NewOrderService(db)
+	orderService := NewOrderService(db, p)
 	orderHandler := NewOrderHandler(orderService)
 	addressService := NewAddressService(db)
 	addressHandler := NewAddressHandler(addressService)

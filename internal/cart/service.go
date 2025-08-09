@@ -37,24 +37,30 @@ type CartItemResponse struct {
 func (s *CartService) GetCartItems(userID uint) ([]CartItemResponse, error) {
 	key := fmt.Sprintf("cart:%d", userID)
 
+	start := time.Now()
 	// 1. 先尝试从Redis获取完整购物车
 	if cartMap, err := db.RDB.HGetAll(context.Background(), key).Result(); err == nil && len(cartMap) > 0 {
 		return s.buildCartFromRedis(userID, cartMap)
 	}
+	duration := time.Since(start)
+	fmt.Printf("Redis响应时间: %v\n", duration)
 
+	start = time.Now()
 	// 2. Redis无数据时从数据库加载
 	var results []CartItemResponse
 	err := s.DB.Table("cart_items").
-		Select("cart_items.cart_id, specialproduct.product_id, specialproduct.product_name, "+
-			"specialproduct.product_description, specialproduct.price, specialproduct.image_url, "+
+		Select("cart_items.cart_id, special_products.product_id, special_products.product_name, "+
+			"special_products.product_description, special_products.price, special_products.image_url, "+
 			"cart_items.quantity").
-		Joins("JOIN specialproduct ON cart_items.product_id = specialproduct.product_id").
+		Joins("JOIN special_products ON cart_items.product_id = special_products.product_id").
 		Where("cart_items.user_id = ? AND cart_items.status = ?", userID, "in_cart").
 		Scan(&results).Error
 
 	if err != nil {
 		return nil, fmt.Errorf("查询失败: %w", err)
 	}
+	duration = time.Since(start)
+	fmt.Printf("Mysql响应时间: %v\n", duration)
 
 	// 3. 将数据库数据写入Redis缓存
 	go s.cacheCartItems(userID, results)

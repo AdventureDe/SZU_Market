@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
@@ -19,7 +20,7 @@ var RDB *redis.Client
 
 // InitDB 初始化数据库连接并返回数据库实例go
 func InitDB() (*gorm.DB, error) {
-	// 获取环境变量并打印调试信息
+	// 获取环境变量
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbHost := os.Getenv("DB_HOST")
@@ -28,10 +29,11 @@ func InitDB() (*gorm.DB, error) {
 
 	log.Printf("连接信息：User=%s, Host=%s, Port=%s, DBName=%s", dbUser, dbHost, dbPort, dbName)
 
-	// 格式化连接字符串
+	// 连接字符串
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		dbUser, dbPassword, dbHost, dbPort, dbName)
 
+	// 打开 GORM 连接
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -39,8 +41,19 @@ func InitDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	// 自动迁移模型
-	autoMigrate()
+	// 获取底层 sql.DB
+	sqlDB, err := DB.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	// 设置连接池参数
+	sqlDB.SetMaxOpenConns(200)                // 最大打开连接数
+	sqlDB.SetMaxIdleConns(50)                 // 最大空闲连接数
+	sqlDB.SetConnMaxLifetime(time.Minute * 5) // 连接最大生命周期
+
+	// 自动迁移
+	autoMigrate(DB)
 
 	return DB, nil
 }
@@ -91,8 +104,8 @@ func CloseRedis() {
 }
 
 // autoMigrate 自动迁移所有模型
-func autoMigrate() {
-	err := DB.AutoMigrate(
+func autoMigrate(db *gorm.DB) {
+	err := db.AutoMigrate(
 		&User{},
 	)
 	if err != nil {

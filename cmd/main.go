@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"runtime"
 
 	"szu_market/internal/auth"
 	"szu_market/internal/cart"
@@ -17,6 +18,7 @@ import (
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	// 初始化数据库（注意：函数名首字母大写）
 	_, err := db.InitDB()
 	if err != nil {
@@ -31,6 +33,9 @@ func main() {
 		return
 	}
 	defer db.CloseRedis()
+
+	producer := order.NewKafkaProducer([]string{"kafka:9092"})
+	defer producer.Close()
 
 	// 启动Kafka消费者（并发启动多个消费者）
 	consumerService := order.NewConsumerService(db.DB)
@@ -51,12 +56,12 @@ func main() {
 	r.Static("/improve", "./Improve")
 	r.Static("/goods_pic", "./Improve/goods_pic")
 	// 用户认证路由
-	registerAllRoutes(r, db.DB)
+	registerAllRoutes(r, db.DB, producer)
 
 	r.Run(":8080") // 启动服务
 }
 
-func registerAllRoutes(r *gin.Engine, db *gorm.DB) {
+func registerAllRoutes(r *gin.Engine, db *gorm.DB, producer *order.KafkaProducer) {
 	// 注册认证路由
 	auth.RegisterAuthRoutes(r, db)
 	// 注册商品路由
@@ -64,7 +69,7 @@ func registerAllRoutes(r *gin.Engine, db *gorm.DB) {
 	// 注册购物车路由
 	cart.RegisterCartRoutes(r, db)
 	// 注册订单路由
-	order.RegisterOrderRoutes(r, db)
+	order.RegisterOrderRoutes(r, db, producer)
 	// 注册用户路由
 	info.RegisterInfoRoutes(r, db)
 	// 注册收藏路由

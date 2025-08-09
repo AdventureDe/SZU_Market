@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
+	"sync"
 	"time"
 
 	"szu_market/internal/db"
@@ -17,15 +19,16 @@ import (
 
 // OrderService 定义订单服务
 type OrderService struct {
-	DB *gorm.DB
+	DB       *gorm.DB
+	producer *KafkaProducer
 }
 type AddressService struct {
 	DB *gorm.DB
 }
 
 // NewOrderService 创建新的订单服务实例
-func NewOrderService(db *gorm.DB) *OrderService {
-	return &OrderService{DB: db}
+func NewOrderService(db *gorm.DB, p *KafkaProducer) *OrderService {
+	return &OrderService{DB: db, producer: p}
 }
 
 func NewAddressService(db *gorm.DB) *AddressService {
@@ -40,6 +43,7 @@ type CreateOrderInput struct {
 	ProductIDs        []uint  `json:"product_ids"`        // 一个产品ID的切片
 	ProductQuantities []uint  `json:"product_quantities"` // 对应的数量的切片
 }
+
 type OrderProductResponse struct {
 	ProductID   uint    `json:"product_id"`
 	ProductName string  `json:"product_name"`
@@ -125,6 +129,69 @@ func (s *OrderService) CreateOrder(input *CreateOrderInput) (*OrderResponse, err
 	}, nil
 }
 
+// -------------  生产者 ------------------
+// KafkaProducer 结构体，管理 kafka.Writer 复用连接
+type KafkaProducer struct {
+	writerMap map[string]*kafka.Writer
+	mu        sync.Mutex
+	brokers   []string
+}
+
+// NewKafkaProducer 初始化 KafkaProducer
+func NewKafkaProducer(brokers []string) *KafkaProducer {
+	return &KafkaProducer{
+		writerMap: make(map[string]*kafka.Writer),
+		brokers:   brokers,
+	}
+}
+
+// getWriter 获取对应topic的writer，复用
+func (p *KafkaProducer) getWriter(topic string) *kafka.Writer {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	if w, exists := p.writerMap[topic]; exists {
+		return w
+	}
+
+	w := kafka.NewWriter(kafka.WriterConfig{
+		Brokers: p.brokers,
+		Topic:   topic,
+		//Balancer: &kafka.LeastBytes{}, // 如果想用key分区，可以注释此行，默认是按Key分区
+	})
+	p.writerMap[topic] = w
+	return w
+}
+
+// SendMessage 发送消息 复用同一个kafka.Writer
+func (p *KafkaProducer) SendMessage(topic, key string, payload interface{}) error {
+	writer := p.getWriter(topic)
+
+	msgBody, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("消息序列化失败: %w", err)
+	}
+	return writer.WriteMessages(context.Background(),
+		kafka.Message{
+			Key:   []byte(key),
+			Value: msgBody,
+		},
+	)
+}
+
+// Close 关闭所有writer
+func (p *KafkaProducer) Close() error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	for _, w := range p.writerMap {
+		_ = w.Close()
+	}
+	return nil
+}
+
+//-------------  生产者 ------------------
+
 func (s *OrderService) sendAsyncMessages(orderID uint, productIDs []uint, quantities []uint) {
 	// 发送支付消息
 	if err := s.sendPaymentMessage(orderID); err != nil {
@@ -151,7 +218,7 @@ func (s *OrderService) sendPaymentMessage(orderID uint) error {
 	}{
 		OrderID: orderID,
 	}
-	return sendToQueue("paymentQueue", msg)
+	return s.producer.SendMessage("paymentQueue", strconv.FormatUint(uint64(orderID), 10), msg)
 }
 
 // 发送销量消息
@@ -163,7 +230,7 @@ func (s *OrderService) sendSalesMessage(productID, quantity uint) error {
 		ProductID: productID,
 		Quantity:  quantity,
 	}
-	return sendToQueue("salesQueue", msg)
+	return s.producer.SendMessage("salesQueue", strconv.FormatUint(uint64(productID), 10), msg)
 }
 
 // 发送通知消息
@@ -173,26 +240,7 @@ func (s *OrderService) sendNoticeMessage(orderID uint) error {
 	}{
 		OrderID: orderID,
 	}
-	return sendToQueue("noticeQueue", msg)
-}
-
-// 发送队列 使用kafka
-func sendToQueue(topic string, payload interface{}) error {
-	writer := kafka.NewWriter(kafka.WriterConfig{
-		Brokers:  []string{"kafka:9092"},
-		Topic:    topic,
-		Balancer: &kafka.LeastBytes{},
-	})
-	defer writer.Close()
-
-	msgBody, err := json.Marshal(payload)
-	if err != nil {
-		return fmt.Errorf("消息序列化失败: %w", err)
-	}
-
-	return writer.WriteMessages(context.Background(),
-		kafka.Message{Value: msgBody},
-	)
+	return s.producer.SendMessage("noticeQueue", strconv.FormatUint(uint64(orderID), 10), msg)
 }
 
 // CancelOrder 取消订单
@@ -321,7 +369,7 @@ func (s *OrderService) GetOrders(user_id uint) ([]OrderResponse, error) {
 	if err := s.DB.Table("orders AS o").
 		Select("o.order_id,o.created_at,o.status,o.total_price,o.status,op.product_id,op.num as quantity,sp.product_name,sp.image_url,sp.price,o.address_id").
 		Joins("JOIN order_products op ON op.order_id = o.order_id").
-		Joins("JOIN specialproduct sp ON sp.product_id = op.product_id").
+		Joins("JOIN special_products sp ON sp.product_id = op.product_id").
 		Where("o.user_id = ?", user_id).
 		Order("o.created_at DESC").
 		Scan(&raws).Error; err != nil {
