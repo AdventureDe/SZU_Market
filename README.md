@@ -66,51 +66,57 @@
 └── ...                     # Other project files
 ```
 
-## 测试环境说明
+## Test Environment  
 
-- 操作系统：Windows 10  
-- CPU：AMD Ryzen 7 5800H，8核，主频3.20GHz  
-- 内存：16GB DDR4  
-- 网络环境：局域网，千兆以太网（1Gbps）  
-- 运行环境：Docker（自定义镜像版本）  
-- Go 语言版本：Go 1.24  
-- 数据库：MySQL 5.7.11，本地安装（非容器化）  
-- 测试工具：JMeter 5.6.3，使用自定义测试脚本模拟真实请求  
-- 测试机器数量：测试机和服务器集中于同一台机器  
-- 磁盘：SSD 512GB  
+- **Operating System**: Windows 10  
+- **CPU**: AMD Ryzen 7 5800H, 8 cores, base clock 3.20 GHz  
+- **Memory**: 16 GB DDR4  
+- **Network**: Local area network, Gigabit Ethernet (1 Gbps)  
+- **Runtime Environment**: Docker (custom image version)  
+- **Go Version**: Go 1.24  
+- **Database**: MySQL 5.7.11, installed locally (non-containerized)  
+- **Testing Tool**: JMeter 5.6.3, using custom test scripts to simulate real-world requests  
+- **Number of Test Machines**: Test client and server running on the same machine  
+- **Storage**: 512 GB SSD  
 
-### 说明与提示
+### Notes and Considerations  
 
-- 本次性能测试使用的测试机型较为普通，CPU和硬件性能相对有限，实际部署环境性能可能优于测试结果。  
-- 性能数据仅供参考，具体表现会受硬件配置、网络环境、系统调优等多种因素影响。  
-- 建议根据自身实际环境进行专项压力测试与优化，以获得更准确的性能评估。  
+- The hardware used for this performance test is a standard configuration; CPU and overall system performance are relatively limited. Actual production deployments may achieve better results.  
+- The performance metrics provided are for reference only. Actual results may vary depending on hardware specifications, network conditions, system tuning, and other environmental factors.  
+- It is recommended to conduct environment-specific stress testing and optimization to obtain more accurate performance evaluations.  
 
-## 性能测试结果
+---
 
-本项目进行了多轮并发性能测试，测试参数和目标如下表：
+## Performance Testing Results  
 
-| 轮次 | 并发数 | 持续时间 | Ramp-up | 循环次数 | 测试目标       |
-| ---- | ------ | -------- | ------- | -------- | -------------- |
-| 1    | 10     | 1 min    | 5s      | forever  | 测试基准       |
-| 2    | 50     | 1 min    | 5s      | forever  | 观察吞吐量变化 |
-| 3    | 100    | 1 min    | 5s      | forever  | 找临界点       |
-| 4    | 200    | 1 min    | 5s      | forever  | 识别性能瓶颈   |
+Multiple rounds of concurrent performance tests were conducted, with the parameters and objectives summarized below:  
 
-### 性能指标汇总
+| Round | Concurrency | Duration | Ramp-up | Loop Count | Objective |
+| ----- | ----------- | -------- | ------- | ---------- | --------- |
+| 1     | 10          | 1 min    | 5s      | forever    | Baseline measurement |
+| 2     | 50          | 1 min    | 5s      | forever    | Observe throughput trend |
+| 3     | 100         | 1 min    | 5s      | forever    | Identify performance threshold |
+| 4     | 200         | 1 min    | 5s      | forever    | Detect performance bottlenecks |
 
-| 并发数 | 请求数 (# Samples) | 平均响应时间 (ms) | 最小响应时间 (ms) | 最大响应时间 (ms) | 标准差 (ms) | 错误率 (%) | 吞吐量 (requests/sec) | 接收速率 (KB/sec) | 发送速率 (KB/sec) |
-| ------ | ------------------ | ----------------- | ----------------- | ----------------- | ----------- | ---------- | --------------------- | ----------------- | ----------------- |
-| 10     | 2,000              | 77                | 16                | 551               | 63.18       | 0.00       | 94.67                 | 27.74             | 27.55             |
-| 50     | 10,000             | 424               | 25                | 34,471            | 2,307.49    | 0.00       | 108.42                | 31.77             | 31.55             |
-| 100    | 10,000             | 299               | 29                | 618               | 76.58       | 0.00       | 319.23                | 84.15             | 83.59             |
-| 200    | 11,562             | 659               | 38                | 5,839             | 642.51      | 0.00       | 282.24                | 82.69             | 82.14             |
+---
 
-### 结论
+### Performance Metrics Summary  
 
-- 低并发（10）时，系统响应时间低且稳定，吞吐量约为 95 requests/sec。  
-- 并发数提升到50，平均响应时间明显增加，最大响应时间波动较大，吞吐量小幅提升。  
-- 并发100时，吞吐量显著提升至约319 requests/sec，响应时间整体保持较好控制。  
-- 并发200时，吞吐量略有下降，响应时间及波动加剧，测试期间CPU占用达到100%，导致测试被强制停止，显示系统性能瓶颈明显。  
+| Concurrency | Samples (#) | Avg. Response Time (ms) | Min (ms) | Max (ms) | Std. Dev. (ms) | Error Rate (%) | Throughput (req/sec) | Received (KB/sec) | Sent (KB/sec) |
+| ----------- | ----------- | ----------------------- | -------- | -------- | -------------- | -------------- | -------------------- | ----------------- | ------------- |
+| 10          | 2,000       | 77                      | 16       | 551      | 63.18          | 0.00           | 94.67                | 27.74             | 27.55         |
+| 50          | 10,000      | 424                     | 25       | 34,471   | 2,307.49       | 0.00           | 108.42               | 31.77             | 31.55         |
+| 100         | 10,000      | 299                     | 29       | 618      | 76.58          | 0.00           | 319.23               | 84.15             | 83.59         |
+| 200         | 11,562      | 659                     | 38       | 5,839    | 642.51         | 0.00           | 282.24               | 82.69             | 82.14         |
+
+---
+
+### Conclusions  
+
+- At low concurrency (10), the system maintained low and stable response times, with a throughput of approximately **95 req/sec**.  
+- Increasing concurrency to 50 resulted in a noticeable rise in average response time, significant fluctuations in maximum response time, and only a modest increase in throughput.  
+- At 100 concurrent users, throughput increased significantly to approximately **319 req/sec**, while response times remained under good control.  
+- At 200 concurrent users, throughput slightly declined, and both average response times and fluctuations worsened. CPU utilization reached 100% during testing, causing the test to terminate prematurely—indicating a clear performance bottleneck.  
 
 
 ## Getting Started
